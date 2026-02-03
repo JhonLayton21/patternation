@@ -1,5 +1,4 @@
-# Nombre del proyecto
-PATTERNATION
+# PATTERNATION
 Side project built as an indie SaaS.
 
 ## Tech stack
