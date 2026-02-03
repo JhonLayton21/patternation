@@ -3,8 +3,27 @@
 import React, { useState } from 'react';
 import PatternCanvas from '@/components/PatternCanvas';
 import { initialPatternState, defaultPatternConfig } from '@/domain';
+import { generatePatternSVG } from '@/domain/core/patternOrchestrator'; // Import orchestrator
 import type { PatternConfig } from '@/domain/pattern/PatternConfig';
 import type { PatternType } from '@/domain/pattern/PatternType';
+
+/**
+ * Utility to download string content as file
+ */
+function downloadSVG(svgString: string, filename: string) {
+  const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 
 /**
  * MVP Entry Point (Stateful with interactivity)
@@ -32,6 +51,24 @@ export default function Home() {
       ...prev,
       [key]: e.target.value,
     }));
+  };
+
+  // Export Handler
+  const handleDownload = () => {
+    try {
+      // Re-generate SVG strictly from current state
+      const svg = generatePatternSVG({
+        type: activeType,
+        config: config,
+        renderOptions: initialPatternState.renderOptions
+      });
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      downloadSVG(svg, `pattern-${activeType}-${timestamp}.svg`);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to generate SVG for export.');
+    }
   };
 
   return (
@@ -153,6 +190,27 @@ export default function Home() {
               {config.strokeColor}
             </span>
           </div>
+        </section>
+
+        <div role="separator" style={{ width: '1px', height: '40px', background: '#ccc' }}></div>
+
+        {/* Group 4: Actions */}
+        <section style={{ display: 'flex', alignItems: 'center' }}>
+          <button
+            onClick={handleDownload}
+            style={{
+              padding: '10px 20px',
+              background: '#0070f3',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '0.9rem'
+            }}
+          >
+            Download SVG
+          </button>
         </section>
       </aside>
 
