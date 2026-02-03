@@ -3,12 +3,12 @@
 import React, { useState } from 'react';
 import PatternCanvas from '@/components/PatternCanvas';
 import { initialPatternState, defaultPatternConfig } from '@/domain';
-import { generatePatternSVG } from '@/domain/core/patternOrchestrator'; // Import orchestrator
+import { generatePatternSVG } from '@/domain/core/patternOrchestrator';
 import type { PatternConfig } from '@/domain/pattern/PatternConfig';
 import type { PatternType } from '@/domain/pattern/PatternType';
 
 /**
- * Utility to download string content as file
+ * Utility to download string content as file (SVG)
  */
 function downloadSVG(svgString: string, filename: string) {
   const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
@@ -20,9 +20,61 @@ function downloadSVG(svgString: string, filename: string) {
   document.body.appendChild(link);
   link.click();
 
-  // Cleanup
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+/**
+ * Utility to convert SVG string to PNG and download
+ * Uses browser Canvas API strictly in UI layer
+ */
+function downloadPNG(svgString: string, width: number, height: number, filename: string) {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    alert('Canvas not supported in this browser');
+    return;
+  }
+
+  const img = new Image();
+  // Encode SVG string to base64 to avoid parsing issues
+  const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+
+  img.onload = () => {
+    // Fill white background (optional, but good for PNGs)
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, width, height);
+
+    // Draw SVG image
+    // Note: To support high-res scaling, we need to ensure the SVG renders at the target frequency
+    // For simple patterns, drawing the image stretched works if the SVG is vector commands.
+    // However, if the SVG has fixed width/height attributes, it might scale.
+    // Ideally, we'd inject the width/height into the SVG string before blob creation, 
+    // but drawing to larger canvas usually works for SVG sources.
+    ctx.drawImage(img, 0, 0, width, height);
+
+    // Export to PNG
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+
+      const pngUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = pngUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(pngUrl);
+      URL.revokeObjectURL(url);
+    });
+  };
+
+  img.src = url;
 }
 
 /**
@@ -32,11 +84,14 @@ export default function Home() {
   const [activeType, setActiveType] = useState<PatternType>('grid');
   const [config, setConfig] = useState<PatternConfig>(defaultPatternConfig);
 
+  // Export Resolution State
+  const [exportWidth, setExportWidth] = useState<number>(2000);
+  const [exportHeight, setExportHeight] = useState<number>(2000);
+
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setActiveType(e.target.value as PatternType);
   };
 
-  // Generic handler for numeric inputs
   const handleNumberChange = (key: keyof PatternConfig) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value, 10);
     setConfig((prev) => ({
@@ -45,7 +100,6 @@ export default function Home() {
     }));
   };
 
-  // Generic handler for string inputs (color)
   const handleStringChange = (key: keyof PatternConfig) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setConfig((prev) => ({
       ...prev,
@@ -53,21 +107,41 @@ export default function Home() {
     }));
   };
 
-  // Export Handler
-  const handleDownload = () => {
-    try {
-      // Re-generate SVG strictly from current state
-      const svg = generatePatternSVG({
-        type: activeType,
-        config: config,
-        renderOptions: initialPatternState.renderOptions
-      });
+  // Export Resolution Handlers
+  const handleExportWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setExportWidth(parseInt(e.target.value, 10));
+  };
 
+  const handleExportHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setExportHeight(parseInt(e.target.value, 10));
+  };
+
+  const generateCurrentSVG = () => {
+    return generatePatternSVG({
+      type: activeType,
+      config: config,
+      renderOptions: initialPatternState.renderOptions
+    });
+  };
+
+  const handleDownloadSVG = () => {
+    try {
+      const svg = generateCurrentSVG();
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       downloadSVG(svg, `pattern-${activeType}-${timestamp}.svg`);
     } catch (error) {
-      console.error('Export failed:', error);
-      alert('Failed to generate SVG for export.');
+      console.error('Export SVG failed:', error);
+    }
+  };
+
+  const handleDownloadPNG = () => {
+    try {
+      const svg = generateCurrentSVG();
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      // Use configured export dimensions
+      downloadPNG(svg, exportWidth, exportHeight, `pattern-${activeType}-${timestamp}.png`);
+    } catch (error) {
+      console.error('Export PNG failed:', error);
     }
   };
 
@@ -87,7 +161,6 @@ export default function Home() {
         <p style={{ color: '#666' }}>Core Logic + SVG Renderer + React</p>
       </div>
 
-      {/* Controls Section - Semantically grouped */}
       <aside
         aria-label="Pattern Configuration Controls"
         style={{
@@ -102,7 +175,6 @@ export default function Home() {
           border: '1px solid #ddd'
         }}
       >
-        {/* Group 1: Pattern Selection */}
         <section style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
           <label htmlFor="pattern-select" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Pattern Type:</label>
           <select
@@ -120,7 +192,6 @@ export default function Home() {
 
         <div role="separator" style={{ width: '1px', height: '40px', background: '#ccc' }}></div>
 
-        {/* Group 2: Dimensions (Fieldset) */}
         <fieldset style={{
           border: 'none',
           padding: 0,
@@ -128,9 +199,7 @@ export default function Home() {
           display: 'flex',
           gap: '20px'
         }}>
-          <legend style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
-            Pattern Dimensions
-          </legend>
+          <legend style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>Pattern Dimensions</legend>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
             <label htmlFor="size-slider" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
@@ -173,7 +242,6 @@ export default function Home() {
 
         <div role="separator" style={{ width: '1px', height: '40px', background: '#ccc' }}></div>
 
-        {/* Group 3: Appearance */}
         <section style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
           <label htmlFor="color-picker" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
             Stroke Color
@@ -186,35 +254,80 @@ export default function Home() {
               onChange={handleStringChange('strokeColor')}
               style={{ cursor: 'pointer', height: '30px', width: '50px', padding: 0, border: 'none' }}
             />
-            <span style={{ fontSize: '0.8rem', fontFamily: 'monospace' }}>
-              {config.strokeColor}
-            </span>
           </div>
         </section>
 
         <div role="separator" style={{ width: '1px', height: '40px', background: '#ccc' }}></div>
 
-        {/* Group 4: Actions */}
-        <section style={{ display: 'flex', alignItems: 'center' }}>
+        {/* Export Resolution */}
+        <fieldset style={{
+          border: 'none',
+          padding: 0,
+          margin: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '5px'
+        }}>
+          <legend style={{ fontSize: '0.9rem', fontWeight: 600 }}>PNG Size (px)</legend>
+          <div style={{ display: 'flex', gap: '5px' }}>
+            <input
+              type="number"
+              value={exportWidth}
+              onChange={handleExportWidthChange}
+              placeholder="W"
+              style={{ width: '60px', padding: '5px' }}
+              aria-label="Export Width"
+            />
+            <span style={{ alignSelf: 'center' }}>x</span>
+            <input
+              type="number"
+              value={exportHeight}
+              onChange={handleExportHeightChange}
+              placeholder="H"
+              style={{ width: '60px', padding: '5px' }}
+              aria-label="Export Height"
+            />
+          </div>
+        </fieldset>
+
+        <div role="separator" style={{ width: '1px', height: '40px', background: '#ccc' }}></div>
+
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <button
-            onClick={handleDownload}
+            onClick={handleDownloadSVG}
             style={{
-              padding: '10px 20px',
+              padding: '6px 12px',
               background: '#0070f3',
               color: 'white',
               border: 'none',
               borderRadius: '5px',
               cursor: 'pointer',
               fontWeight: 'bold',
-              fontSize: '0.9rem'
+              fontSize: '0.8rem',
+              width: '100%'
             }}
           >
-            Download SVG
+            Export SVG
+          </button>
+          <button
+            onClick={handleDownloadPNG}
+            style={{
+              padding: '6px 12px',
+              background: '#333',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '0.8rem',
+              width: '100%'
+            }}
+          >
+            Export PNG
           </button>
         </section>
       </aside>
 
-      {/* Preview Area */}
       <section
         aria-label="Pattern Preview"
         style={{
@@ -231,22 +344,6 @@ export default function Home() {
           className="pattern-preview"
         />
       </section>
-
-      {activeType !== 'grid' && (
-        <div role="alert" style={{
-          color: '#d32f2f',
-          background: '#ffebee',
-          padding: '10px 20px',
-          borderRadius: '4px',
-          fontSize: '0.9rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px'
-        }}>
-          <span>⚠️</span>
-          <span>Generator for "{activeType}" adds extra complexity and is not implemented in this MVP phase.</span>
-        </div>
-      )}
     </main>
   );
 }
