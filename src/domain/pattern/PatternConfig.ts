@@ -4,10 +4,10 @@
  */
 export interface PatternConfig {
     /**
-     * Tamaño del elemento base del patrón (px)
+     * Tamaño de cada celda del patrón (px)
      * Para grid: tamaño de cada celda
      */
-    size?: number;
+    cellSize?: number;
 
     /**
      * Espacio entre elementos (px)
@@ -16,10 +16,15 @@ export interface PatternConfig {
     gap?: number;
 
     /**
-     * Color del patrón
+     * Color del borde/trazo del patrón
      * Formato: hex, rgb, rgba, hsl, etc.
      */
-    color?: string;
+    strokeColor?: string;
+
+    /**
+     * Grosor del borde/trazo (px)
+     */
+    strokeWidth?: number;
 
     /**
      * Ancho del canvas/área de renderizado (px)
