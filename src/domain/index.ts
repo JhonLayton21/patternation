@@ -4,3 +4,4 @@
 
 export * from './pattern';
 export * from './renderer';
+export * from './core';

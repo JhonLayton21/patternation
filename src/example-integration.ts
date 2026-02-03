@@ -1,103 +1,109 @@
 /**
- * Ejemplo de integración: Generador Grid + Renderer SVG
+ * Ejemplo simplificado usando el orquestador del core
  * 
- * Este ejemplo demuestra cómo usar el generador de patrones
- * junto con el renderer SVG para crear un patrón completo.
+ * Este ejemplo demuestra cómo usar generatePatternSVG
+ * para generar patrones SVG con una sola llamada.
  */
 
-import { generateGridPattern } from './domain/pattern/generators/gridPattern';
-import { renderToSVG } from './domain/renderer/svgRenderer';
+import { generatePatternSVG } from './domain/core/patternOrchestrator';
 
-// Ejemplo 1: Grid pattern básico con defaults
-console.log('=== Ejemplo 1: Grid Pattern Básico ===\n');
+console.log('=== Ejemplo con Orquestador del Core ===\n');
 
-const basicPattern = generateGridPattern({});
-const basicSVG = renderToSVG(basicPattern);
+// Ejemplo 1: Uso básico
+console.log('Ejemplo 1: Uso básico con defaults\n');
 
-console.log('Patrón generado:');
-console.log(`- Elementos: ${basicPattern.elements.length}`);
-console.log(`- Dimensiones: ${basicPattern.dimensions.width}x${basicPattern.dimensions.height}`);
-console.log('\nSVG generado (primeras 200 caracteres):');
-console.log(basicSVG.substring(0, 200) + '...\n');
-
-// Ejemplo 2: Grid pattern personalizado
-console.log('=== Ejemplo 2: Grid Pattern Personalizado ===\n');
-
-const customPattern = generateGridPattern({
-    cellSize: 30,
-    gap: 5,
-    strokeColor: '#FF5733',
-    strokeWidth: 2,
-    width: 400,
-    height: 300,
+const svg1 = generatePatternSVG({
+    type: 'grid',
+    config: {},
 });
 
-const customSVG = renderToSVG(customPattern, {
-    backgroundColor: '#F0F0F0',
+console.log(`SVG generado (${svg1.length} caracteres)`);
+console.log('Primeras 200 caracteres:');
+console.log(svg1.substring(0, 200) + '...\n');
+
+// Ejemplo 2: Configuración personalizada
+console.log('Ejemplo 2: Grid personalizado con fondo\n');
+
+const svg2 = generatePatternSVG({
+    type: 'grid',
+    config: {
+        cellSize: 30,
+        gap: 5,
+        strokeColor: '#FF5733',
+        strokeWidth: 2,
+        width: 400,
+        height: 300,
+    },
+    renderOptions: {
+        backgroundColor: '#F0F0F0',
+    },
 });
 
-console.log('Patrón personalizado:');
-console.log(`- Elementos: ${customPattern.elements.length}`);
-console.log(`- Cell size: 30px`);
-console.log(`- Gap: 5px`);
-console.log(`- Color: #FF5733`);
-console.log(`- Dimensiones: ${customPattern.dimensions.width}x${customPattern.dimensions.height}`);
-console.log('\nSVG con fondo (primeras 300 caracteres):');
-console.log(customSVG.substring(0, 300) + '...\n');
+console.log(`SVG con fondo generado (${svg2.length} caracteres)\n`);
 
 // Ejemplo 3: Grid compacto
-console.log('=== Ejemplo 3: Grid Compacto ===\n');
+console.log('Ejemplo 3: Grid compacto para íconos\n');
 
-const compactPattern = generateGridPattern({
-    cellSize: 10,
-    gap: 2,
-    strokeColor: '#0066CC',
-    strokeWidth: 1,
-    width: 200,
-    height: 200,
+const svg3 = generatePatternSVG({
+    type: 'grid',
+    config: {
+        cellSize: 10,
+        gap: 2,
+        strokeColor: '#0066CC',
+        strokeWidth: 1,
+        width: 100,
+        height: 100,
+    },
 });
 
-const compactSVG = renderToSVG(compactPattern);
+console.log(`Grid compacto generado (${svg3.length} caracteres)\n`);
 
-console.log('Grid compacto:');
-console.log(`- Elementos: ${compactPattern.elements.length}`);
-console.log(`- Tamaño SVG: ${compactSVG.length} caracteres`);
+// Ejemplo 4: SVG completo para visualizar
+console.log('Ejemplo 4: SVG completo (pequeño)\n');
 
-// Ejemplo 4: Guardar SVG a archivo (simulado)
-console.log('\n=== Ejemplo 4: Exportación ===\n');
-
-const exportPattern = generateGridPattern({
-    cellSize: 25,
-    gap: 0,
-    strokeColor: '#000000',
-    strokeWidth: 1,
-    width: 500,
-    height: 500,
+const svg4 = generatePatternSVG({
+    type: 'grid',
+    config: {
+        cellSize: 40,
+        gap: 10,
+        strokeColor: '#333333',
+        strokeWidth: 2,
+        width: 150,
+        height: 150,
+    },
+    renderOptions: {
+        backgroundColor: '#FFFFFF',
+    },
 });
 
-const exportSVG = renderToSVG(exportPattern);
+console.log(svg4);
+console.log('\n');
 
-console.log('SVG listo para exportar:');
-console.log(`- Tamaño: ${exportSVG.length} caracteres`);
-console.log('- Puede guardarse como .svg');
-console.log('- Puede usarse en <img> o como background');
-console.log('- Puede convertirse a PNG/JPEG si es necesario\n');
+// Ejemplo 5: Manejo de errores
+console.log('Ejemplo 5: Manejo de errores\n');
 
-// Mostrar SVG completo de un ejemplo pequeño
-console.log('=== SVG Completo (Ejemplo Pequeño) ===\n');
+try {
+    generatePatternSVG({
+        type: 'dots',
+        config: {},
+    });
+} catch (error) {
+    console.log('Error capturado:', (error as Error).message);
+}
 
-const smallPattern = generateGridPattern({
-    cellSize: 40,
-    gap: 10,
-    strokeColor: '#333333',
-    strokeWidth: 2,
-    width: 150,
-    height: 150,
-});
-
-const smallSVG = renderToSVG(smallPattern, {
-    backgroundColor: '#FFFFFF',
-});
-
-console.log(smallSVG);
 console.log('\n=== Fin de Ejemplos ===');
+
+// Casos de uso reales
+console.log('\n=== Casos de Uso Reales ===\n');
+
+console.log('1. Guardar como archivo .svg:');
+console.log('   fs.writeFileSync("pattern.svg", svg);\n');
+
+console.log('2. Usar en HTML:');
+console.log('   <img src="data:image/svg+xml;base64,..." />\n');
+
+console.log('3. Usar como background CSS:');
+console.log('   background-image: url("data:image/svg+xml,...");\n');
+
+console.log('4. Convertir a PNG/JPEG (con librería externa):');
+console.log('   sharp(Buffer.from(svg)).png().toFile("pattern.png");\n');
