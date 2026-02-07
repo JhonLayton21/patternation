@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PatternCanvas from '@/components/PatternCanvas';
 import ControlPanel from '@/components/ControlPanel';
 import PreviewControls from '@/components/PreviewControls';
@@ -10,6 +10,8 @@ import type { PatternConfig } from '@/domain/pattern/PatternConfig';
 import type { PatternType } from '@/domain/pattern/PatternType';
 import type { PatternState } from '@/domain/presets';
 import { usePresetManager } from '@/hooks/usePresetManager';
+import { usePatternHistory } from '@/hooks/usePatternHistory';
+import { useShareURL } from '@/hooks/useShareURL';
 import { generateRandomPatternState } from '@/domain/random';
 
 /**
@@ -94,7 +96,32 @@ export default function Home() {
   const [currentSeed, setCurrentSeed] = useState<string>('');
 
   /**
-   * Build current state for preset/random system
+   * Build FULL current state for preset/random/history/share systems
+   * Includes UI state (zoom, checkerboard) for URL sharing
+   */
+  const getCurrentFullState = (): PatternState => ({
+    patternType: activeType,
+    geometry: {
+      cellSize: config.cellSize ?? 20,
+      gap: config.gap ?? 0,
+      width: exportWidth,
+      height: exportHeight,
+    },
+    style: {
+      strokeColor: config.strokeColor ?? '#000000',
+      strokeWidth: config.strokeWidth ?? 1,
+      strokeOpacity: config.strokeOpacity ?? 1,
+      lineCap: config.lineCap ?? 'butt',
+      strokeDasharray: config.strokeDasharray ?? [],
+      backgroundColor: config.backgroundColor,
+      backgroundOpacity: 1,
+    },
+    zoom,
+    checkerboard: showCheckerboard,
+  });
+
+  /**
+   * Build legacy state for presets (backward compatible)
    */
   const getCurrentState = (): PatternState => ({
     patternType: activeType,
@@ -106,6 +133,46 @@ export default function Home() {
     lineCap: config.lineCap ?? 'butt',
     strokeDasharray: (config.strokeDasharray ? (Array.isArray(config.strokeDasharray) ? 'dashed' : config.strokeDasharray) : 'solid') as 'solid' | 'dashed' | 'dotted',
     backgroundColor: config.backgroundColor ?? '#ffffff'
+  });
+
+  // PHASE 7: History (Undo/Redo)
+  const history = usePatternHistory(getCurrentFullState(), (state) => {
+    // Apply state from history
+    setActiveType(state.patternType);
+    setConfig({
+      cellSize: state.geometry.cellSize,
+      gap: state.geometry.gap,
+      strokeColor: state.style.strokeColor,
+      strokeWidth: state.style.strokeWidth,
+      strokeOpacity: state.style.strokeOpacity,
+      lineCap: state.style.lineCap,
+      strokeDasharray: state.style.strokeDasharray,
+      backgroundColor: state.style.backgroundColor,
+    });
+    setExportWidth(state.geometry.width);
+    setExportHeight(state.geometry.height);
+    setZoom(state.zoom ?? 1);
+    setShowCheckerboard(state.checkerboard ?? false);
+  });
+
+  // PHASE 7: Share (URL state)
+  const share = useShareURL(getCurrentFullState(), (state) => {
+    // Load state from URL on first mount
+    setActiveType(state.patternType);
+    setConfig({
+      cellSize: state.geometry.cellSize,
+      gap: state.geometry.gap,
+      strokeColor: state.style.strokeColor,
+      strokeWidth: state.style.strokeWidth,
+      strokeOpacity: state.style.strokeOpacity,
+      lineCap: state.style.lineCap,
+      strokeDasharray: state.style.strokeDasharray,
+      backgroundColor: state.style.backgroundColor,
+    });
+    setExportWidth(state.geometry.width);
+    setExportHeight(state.geometry.height);
+    setZoom(state.zoom ?? 1);
+    setShowCheckerboard(state.checkerboard ?? false);
   });
 
   /**
@@ -160,6 +227,19 @@ export default function Home() {
       backgroundColor: randomState.backgroundColor
     });
   };
+
+  /**
+   * Track state changes for history
+   * Push to history when pattern/geometry/style changes
+   */
+  useEffect(() => {
+    const newState = getCurrentFullState();
+    // Use a small delay to batch rapid changes
+    const timer = setTimeout(() => {
+      history.pushState(newState, 'Pattern modified');
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [activeType, config, exportWidth, exportHeight]);
 
   const handleTypeChange = (type: PatternType) => {
     setActiveType(type);
@@ -285,6 +365,9 @@ export default function Home() {
             currentState={getCurrentState()}
             onLoadPreset={handleLoadPreset}
             onRandomize={handleRandomize}
+            // PHASE 7: Advanced features
+            history={history}
+            share={share}
           />
         </aside>
 

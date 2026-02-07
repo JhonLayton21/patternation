@@ -5,4 +5,6 @@
 
 export { usePresetManager } from './usePresetManager';
 export { useClipboard } from './useClipboard';
+export { usePatternHistory } from './usePatternHistory';
+export { useShareURL } from './useShareURL';
 

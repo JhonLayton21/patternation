@@ -17,6 +17,11 @@ import type { PatternState } from '@/domain/presets';
 import { PresetsPanel } from './PresetsPanel';
 import { RandomizePanel } from './RandomizePanel';
 import { ExportPanel } from './ExportPanel';
+import { HistoryPanel } from './HistoryPanel';
+import { SharePanel } from './SharePanel';
+import { CodePanel } from './CodePanel';
+import type { UsePatternHistoryResult } from '@/hooks/usePatternHistory';
+import type { UseShareURLResult } from '@/hooks/useShareURL';
 
 export interface ControlPanelProps {
   activeType: PatternType;
@@ -40,6 +45,9 @@ export interface ControlPanelProps {
   currentState?: PatternState;
   onLoadPreset?: (state: PatternState) => void;
   onRandomize?: (state: PatternState, seed: string) => void;
+  // PHASE 7: Advanced features
+  history?: UsePatternHistoryResult;
+  share?: UseShareURLResult;
 }
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -64,9 +72,23 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   currentState,
   onLoadPreset,
   onRandomize,
+  history,
+  share,
 }) => {
   return (
     <div className="control-panel">
+      {/* SECTION: Code Panel (top right toolbar) */}
+      {currentState && (
+        <div className="control-toolbar">
+          <CodePanel
+            patternType={activeType}
+            config={config}
+            width={exportWidth}
+            height={exportHeight}
+          />
+        </div>
+      )}
+
       {/* SECTION: Presets */}
       {currentState && onLoadPreset && (
         <>
@@ -286,9 +308,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       {/* DIVIDER */}
       <div className="section-divider"></div>
 
-      {/* DIVIDER */}
-      <div className="section-divider"></div>
-
       {/* SECTION: Export */}
       <ExportPanel
         patternType={activeType}
@@ -297,6 +316,18 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         exportHeight={exportHeight}
         isExporting={isExporting}
       />
+
+      {/* DIVIDER */}
+      <div className="section-divider"></div>
+
+      {/* SECTION: History (Undo/Redo) */}
+      {history && <HistoryPanel history={history} />}
+
+      {/* DIVIDER */}
+      <div className="section-divider"></div>
+
+      {/* SECTION: Share */}
+      {share && <SharePanel share={share} />}
     </div>
   );
 };
