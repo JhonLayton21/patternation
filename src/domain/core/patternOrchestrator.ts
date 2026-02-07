@@ -1,11 +1,96 @@
+import {
+    initializePatternRegistry,
+    getPatternGenerator,
+    type PatternGeneratorRegistry,
+} from '../patterns';
+import type { PatternState } from '../pattern/PatternState';
+import type { PatternGeneratorConfig } from '../pattern/PatternGeneratorTypes';
 import type { PatternType } from '../pattern/PatternType';
 import type { PatternConfig } from '../pattern/PatternConfig';
 import type { SVGRenderOptions } from '../renderer/svgRenderer';
-import { generateGridPattern } from '../pattern/generators/gridPattern';
 import { renderToSVG } from '../renderer/svgRenderer';
 
 /**
- * Opciones para generar un patrón SVG completo
+ * ===== NUEVA ARQUITECTURA (V2) - ESCALABLE Y MODULAR =====
+ */
+
+/**
+ * Opciones para generar un patrón SVG - Versión 2
+ * Basada en PatternState (serializable, reproducible)
+ */
+export interface GeneratePatternSVGV2Options {
+    /**
+     * Estado completo del patrón
+     * Contiene type, geometry, style
+     */
+    state: PatternState;
+
+    /**
+     * Opciones de renderizado SVG (opcionales)
+     */
+    renderOptions?: SVGRenderOptions;
+}
+
+/**
+ * Genera un SVG a partir de PatternState
+ * 
+ * NUEVA API - Escalable basada en registry:
+ * 1. Inicializa un registry con todos los generadores
+ * 2. Busca el generador para el tipo
+ * 3. Ejecuta el generador con config completa
+ * 4. Renderiza a SVG
+ * 
+ * Ventajas:
+ * - Sin switch statements que crecen infinitamente
+ * - Agregar patrón = registrar generador
+ * - Type-safe: PatternGenerator garantiza interfaz común
+ * - Estado serializable para presets / share
+ * 
+ * @example
+ * ```typescript
+ * const state: PatternState = {
+ *   type: 'grid',
+ *   geometry: { cellSize: 30, gap: 5, width: 800, height: 600 },
+ *   style: { strokeColor: '#FF5733', strokeWidth: 1 },
+ * };
+ * 
+ * const svg = generatePatternSVGv2({
+ *   state,
+ *   renderOptions: { backgroundColor: '#F0F0F0' },
+ * });
+ * ```
+ */
+export function generatePatternSVGv2(options: GeneratePatternSVGV2Options): string {
+    const { state, renderOptions } = options;
+
+    // Inicializar registry (singleton en producción)
+    const registry = initializePatternRegistry();
+
+    // Obtener generador para el tipo
+    const generator = getPatternGenerator(registry, state.type);
+
+    // Preparar configuración del generador
+    const generatorConfig: PatternGeneratorConfig = {
+        geometry: state.geometry,
+        style: state.style,
+    };
+
+    // Ejecutar generador
+    const patternOutput = generator.generate(generatorConfig);
+
+    // Renderizar a SVG
+    const svg = renderToSVG(patternOutput, renderOptions);
+
+    return svg;
+}
+
+/**
+ * ===== API ANTIGUA (V1) - MANTENIDA POR COMPATIBILIDAD =====
+ */
+
+/**
+ * Opciones para generar un patrón SVG - Versión original
+ * Se mantiene por compatibilidad con código existente
  */
 export interface GeneratePatternOptions {
     /**
@@ -25,18 +110,16 @@ export interface GeneratePatternOptions {
 }
 
 /**
- * Orquestador principal que coordina la generación de patrones y renderizado SVG
+ * Genera un SVG a partir de PatternType y PatternConfig
  * 
- * Función pura que:
- * 1. Selecciona el generador apropiado según el tipo
- * 2. Ejecuta el generador con la configuración
- * 3. Renderiza el resultado a SVG
- * 4. Retorna el string SVG final
+ * COMPATIBILIDAD: API original, mantiene funcionamiento existente
+ * Internamente usa el nuevo sistema basado en registry
  * 
- * @param options - Opciones de generación (tipo, config, renderOptions)
- * @returns String SVG válido listo para usar
- * @throws Error si el tipo de patrón no está implementado
+ * Capa de adaptación:
+ * - GeneratePatternOptions (tipo, config) → PatternState (type, geometry, style)
+ * - Llama a generatePatternSVGv2
  * 
+ * @deprecated Usar generatePatternSVGv2 para nuevo código
  * @example
  * ```typescript
  * const svg = generatePatternSVG({
@@ -46,52 +129,51 @@ export interface GeneratePatternOptions {
  *     gap: 5,
  *     strokeColor: '#FF5733',
  *   },
- *   renderOptions: {
- *     backgroundColor: '#F0F0F0',
- *   },
+ *   renderOptions: { backgroundColor: '#F0F0F0' },
  * });
  * ```
  */
 export function generatePatternSVG(options: GeneratePatternOptions): string {
     const { type, config, renderOptions } = options;
 
-    // Seleccionar y ejecutar el generador apropiado
-    const patternOutput = selectAndExecuteGenerator(type, config);
+    // Adaptar API antigua a nueva
+    // Dividir PatternConfig en geometry y style
+    const geometryConfig: PatternConfig = {
+        cellSize: config.cellSize,
+        gap: config.gap,
+        width: config.width,
+        height: config.height,
+    };
 
-    // Renderizar a SVG
-    const svg = renderToSVG(patternOutput, renderOptions);
+    const styleConfig: PatternConfig = {
+        strokeColor: config.strokeColor,
+        strokeWidth: config.strokeWidth,
+    };
 
-    return svg;
+    // Crear PatternState
+    const state: PatternState = {
+        type,
+        geometry: geometryConfig,
+        style: styleConfig,
+    };
+
+    // Usar nueva función internamente
+    return generatePatternSVGv2({
+        state,
+        renderOptions,
+    });
 }
 
 /**
- * Selecciona y ejecuta el generador apropiado según el tipo de patrón
- * 
- * @param type - Tipo de patrón
- * @param config - Configuración del patrón
- * @returns PatternOutput generado
- * @throws Error si el tipo no está implementado
+ * === INYECCIÓN DE DEPENDENCIAS (Opcional, para testing) ===
  */
-function selectAndExecuteGenerator(
-    type: PatternType,
-    config: PatternConfig
-) {
-    switch (type) {
-        case 'grid':
-            return generateGridPattern(config);
 
-        case 'dots':
-            throw new Error(`Pattern type "dots" is not implemented`);
+let injectedRegistry: PatternGeneratorRegistry | null = null;
 
-        case 'waves':
-            throw new Error(`Pattern type "waves" is not implemented`);
+export function setPatternRegistry(registry: PatternGeneratorRegistry): void {
+    injectedRegistry = registry;
+}
 
-        case 'noise':
-            throw new Error(`Pattern type "noise" is not implemented`);
-
-        default:
-            // TypeScript exhaustiveness check
-            const exhaustiveCheck: never = type;
-            throw new Error(`Pattern type "${exhaustiveCheck}" is not implemented`);
-    }
+export function getPatternRegistry(): PatternGeneratorRegistry {
+    return injectedRegistry ?? initializePatternRegistry();
 }

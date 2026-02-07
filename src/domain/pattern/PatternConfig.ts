@@ -1,38 +1,19 @@
 /**
- * Configuración para generar un patrón
- * Propiedades opcionales - valores por defecto aplicados en el generador
+ * DEPRECATED: Usar PatternState en su lugar
+ * 
+ * PatternConfig se mantiene para compatibilidad hacia atrás
+ * pero la nueva arquitectura usa PatternState que separa
+ * geometry y style en interfaces específicas.
+ * 
+ * Migración:
+ * - cellSize, gap, width, height → GeometryConfig
+ * - stro keColor, strokeWidth → StyleConfig
  */
-export interface PatternConfig {
-    /**
-     * Tamaño de cada celda del patrón (px)
-     * Para grid: tamaño de cada celda
-     */
-    cellSize?: number;
 
-    /**
-     * Espacio entre elementos (px)
-     * Para grid: gap entre celdas
-     */
-    gap?: number;
+import type { GeometryConfig } from './GeometryConfig';
+import type { StyleConfig } from './StyleConfig';
 
-    /**
-     * Color del borde/trazo del patrón
-     * Formato: hex, rgb, rgba, hsl, etc.
-     */
-    strokeColor?: string;
-
-    /**
-     * Grosor del borde/trazo (px)
-     */
-    strokeWidth?: number;
-
-    /**
-     * Ancho del canvas/área de renderizado (px)
-     */
-    width?: number;
-
-    /**
-     * Alto del canvas/área de renderizado (px)
-     */
-    height?: number;
+export interface PatternConfig extends GeometryConfig, StyleConfig {
+    // Interfaz combinada para compatibilidad
+    // Nuevos código debe usar GeometryConfig y StyleConfig directamente
 }
