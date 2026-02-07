@@ -1,5 +1,5 @@
 /**
- * Tipos de patrones soportados en el MVP
- * Extensible para futuros patrones (dots, waves, noise, etc.)
+ * Tipos de patrones soportados
+ * PHASE 3: Multiple Pattern Types
  */
-export type PatternType = 'grid' | 'dots' | 'waves' | 'noise';
+export type PatternType = 'grid' | 'dots' | 'diagonalGrid' | 'isometric' | 'zigzag' | 'waves' | 'cross';

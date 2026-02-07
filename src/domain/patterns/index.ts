@@ -7,33 +7,41 @@
  * 3. El orquestador consulta este registry
  * 4. Agregar un nuevo patrón = crear archivo + registrar aquí
  * 
- * Ventajas:
- * - Escalabilidad clara (no toca el orquestador)
- * - Type-safety: PatternGenerator garantiza interfaz común
- * - Testing fácil para cada generador
- * - Separación de concernos (cada patrón es su propio módulo)
+ * PHASE 3: Multiple Pattern Types implementados
  */
 
 import { gridPatternGenerator } from './grid';
+import { dotsPatternGenerator } from './dots';
+import { diagonalGridPatternGenerator } from './diagonalGrid';
+import { isometricPatternGenerator } from './isometric';
+import { zigzagPatternGenerator } from './zigzag';
+import { wavesPatternGenerator } from './waves';
+import { crossPatternGenerator } from './cross';
 import type { PatternGenerator, PatternGeneratorRegistry } from '../pattern/PatternGeneratorTypes';
 
 /**
  * Inicializa el registry con todos los generadores disponibles
  * 
- * Placeholder para futuros patrones:
- * - dots: import { dotsPatternGenerator } from './dots'
- * - waves: import { wavesPatternGenerator } from './waves'
- * - isometric: import { isometricPatternGenerator } from './isometric'
+ * PHASE 3 incluye:
+ * - grid: Rejilla clásica
+ * - dots: Puntos en grid
+ * - diagonalGrid: Líneas diagonales
+ * - isometric: Rejilla isométrica
+ * - zigzag: Patrón zigzag
+ * - waves: Ondas suaves
+ * - cross: Graph paper con cruces
  */
 export function initializePatternRegistry(): PatternGeneratorRegistry {
     const registry: PatternGeneratorRegistry = new Map();
 
-    // Registrar generadores disponibles
+    // Registrar todos los generadores disponibles
     registerGenerator(registry, gridPatternGenerator);
-
-    // TODO: Registrar nuevos patrones aquí según se implemente FASE 3
-    // registerGenerator(registry, dotsPatternGenerator);
-    // registerGenerator(registry, wavesPatternGenerator);
+    registerGenerator(registry, dotsPatternGenerator);
+    registerGenerator(registry, diagonalGridPatternGenerator);
+    registerGenerator(registry, isometricPatternGenerator);
+    registerGenerator(registry, zigzagPatternGenerator);
+    registerGenerator(registry, wavesPatternGenerator);
+    registerGenerator(registry, crossPatternGenerator);
 
     return registry;
 }
