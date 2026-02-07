@@ -8,6 +8,8 @@ import { initialPatternState, defaultPatternConfig } from '@/domain';
 import { generatePatternSVG } from '@/domain/core/patternOrchestrator';
 import type { PatternConfig } from '@/domain/pattern/PatternConfig';
 import type { PatternType } from '@/domain/pattern/PatternType';
+import type { PatternState } from '@/domain/presets';
+import { usePresetManager } from '@/hooks/usePresetManager';
 
 /**
  * Utility to download string content as file (SVG)
@@ -83,6 +85,50 @@ export default function Home() {
   const [zoom, setZoom] = useState<number>(1);
   const [showCheckerboard, setShowCheckerboard] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState<boolean>(false);
+
+  // PHASE 4: Presets
+  usePresetManager(); // Initialize preset manager (loads from localStorage)
+
+  /**
+   * Build current state for preset system
+   */
+  const getCurrentState = (): PatternState => ({
+    patternType: activeType,
+    cellSize: config.cellSize ?? 20,
+    gap: config.gap ?? 0,
+    strokeColor: config.strokeColor ?? '#000000',
+    strokeWidth: config.strokeWidth ?? 1,
+    strokeOpacity: config.strokeOpacity ?? 1,
+    lineCap: config.lineCap ?? 'butt',
+    strokeDasharray: (config.strokeDasharray ? (Array.isArray(config.strokeDasharray) ? 'dashed' : config.strokeDasharray) : 'solid') as 'solid' | 'dashed' | 'dotted',
+    backgroundColor: config.backgroundColor ?? '#ffffff'
+  });
+
+  /**
+   * Load a preset: apply all its values to the current state
+   */
+  const handleLoadPreset = (presetState: PatternState) => {
+    setActiveType(presetState.patternType);
+    
+    // Convert strokeDasharray string back to array format if needed
+    let dasharray: number[] | undefined;
+    if (presetState.strokeDasharray === 'dashed') {
+      dasharray = [5, 5];
+    } else if (presetState.strokeDasharray === 'dotted') {
+      dasharray = [2, 3];
+    }
+
+    setConfig({
+      cellSize: presetState.cellSize,
+      gap: presetState.gap,
+      strokeColor: presetState.strokeColor,
+      strokeWidth: presetState.strokeWidth,
+      strokeOpacity: presetState.strokeOpacity,
+      lineCap: presetState.lineCap,
+      strokeDasharray: dasharray,
+      backgroundColor: presetState.backgroundColor
+    });
+  };
 
   const handleTypeChange = (type: PatternType) => {
     setActiveType(type);
@@ -205,6 +251,8 @@ export default function Home() {
             onDownloadSVG={handleDownloadSVG}
             onDownloadPNG={handleDownloadPNG}
             isExporting={isExporting}
+            currentState={getCurrentState()}
+            onLoadPreset={handleLoadPreset}
           />
         </aside>
 

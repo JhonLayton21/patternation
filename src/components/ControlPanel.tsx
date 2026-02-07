@@ -13,6 +13,8 @@
 import React from 'react';
 import type { PatternConfig } from '@/domain/pattern/PatternConfig';
 import type { PatternType } from '@/domain/pattern/PatternType';
+import type { PatternState } from '@/domain/presets';
+import { PresetsPanel } from './PresetsPanel';
 
 export interface ControlPanelProps {
   activeType: PatternType;
@@ -33,6 +35,8 @@ export interface ControlPanelProps {
   onDownloadSVG: () => void;
   onDownloadPNG: () => void;
   isExporting?: boolean;
+  currentState?: PatternState;
+  onLoadPreset?: (state: PatternState) => void;
 }
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -54,9 +58,22 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onDownloadSVG,
   onDownloadPNG,
   isExporting = false,
+  currentState,
+  onLoadPreset,
 }) => {
   return (
     <div className="control-panel">
+      {/* SECTION: Presets */}
+      {currentState && onLoadPreset && (
+        <>
+          <PresetsPanel
+            currentState={currentState}
+            onLoadPreset={onLoadPreset}
+          />
+          <div className="section-divider"></div>
+        </>
+      )}
+
       {/* SECTION: Pattern */}
       <section className="control-section">
         <h3 className="section-title">Pattern</h3>
@@ -71,9 +88,12 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             className="control-input select-input"
           >
             <option value="grid">Grid</option>
-            <option value="dots">Dots (WIP)</option>
-            <option value="waves">Waves (WIP)</option>
-            <option value="noise">Noise (WIP)</option>
+            <option value="dots">Dots</option>
+            <option value="diagonalGrid">Diagonal Grid</option>
+            <option value="isometric">Isometric</option>
+            <option value="zigzag">Zig-zag</option>
+            <option value="waves">Waves</option>
+            <option value="cross">Cross</option>
           </select>
         </div>
       </section>

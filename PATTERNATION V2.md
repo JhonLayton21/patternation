@@ -1,8 +1,8 @@
 # Patternation – MVP v2 Roadmap
 
-**Estado Global**: 🟢 PHASE 2 Completada | 📌 PHASE 3 Siguiente
+**Estado Global**: 🟢 PHASE 3 Completada | 🟢 PHASE 4 Completada | 📌 PHASE 5 Siguiente
 
-Última actualización: Febrero 7, 2026
+Última actualización: Febrero 7, 2026 (PHASE 4 Presets ✅)
 
 Este documento define la **versión 2 de Patternation** y funciona como **guía operativa para la IA** durante el desarrollo.
 
@@ -17,9 +17,9 @@ Objetivo de v2: convertir Patternation de un MVP funcional a una **herramienta c
 | 0 (Base) | Architecture v2 + UX Polish | ✅ Completada |
 | 1 | UX/UI Polish | ✅ Completada |
 | 2 | Style Controls | ✅ Completada |
-| 3 | Nuevos tipos de patrón | ⏳ Siguiente |
-| 4 | Presets | 📅 Planificada |
-| 5 | Random & Seed | 📅 Planificada |
+| 3 | Nuevos tipos de patrón | ✅ Completada |
+| 4 | Presets | ✅ Completada |
+| 5 | Random & Seed | 📅 Siguiente |
 | 6 | Export Avanzado | 📅 Planificada |
 | 7 | Dev/Power Features | 📅 Opcional |
 
@@ -131,49 +131,67 @@ Dar mayor control visual sin complejidad excesiva.
 
 ## FASE 3 – NUEVOS TIPOS DE PATRÓN
 
+### Status
+✅ **COMPLETADA** - Febrero 7, 2026
+
 ### Objetivo
 
 Aumentar valor creativo del generador.
 
-### Patrones a implementar (prioridad)
+### Patrones implementados ✅
 
-1. Dots
-2. Diagonal grid
-3. Isometric grid
-4. Zig-zag
-5. Waves
-6. Cross / graph paper
+1. ✅ **Dots** - Círculos en grid
+2. ✅ **Diagonal Grid** - Líneas diagonales 45°
+3. ✅ **Isometric** - Grid isométrico 3D
+4. ✅ **Zig-zag** - Patrón angular
+5. ✅ **Waves** - Ondas suave
+6. ✅ **Cross** - Graph paper con cruces
 
-### Reglas
+### Arquitectura
 
-* Cada patrón debe:
-
-  * Usar el mismo sistema base de celdas
-  * Responder a cell size y gap
-  * Ser exportable como SVG limpio
+* Cada patrón usa el mismo sistema base de celdas
+* Todos responden a cell size y gap
+* Sistema de registro escalable (PatternGenerator interface)
+* Todos heredan automáticamente controles de estilo (PHASE 2)
+* Exportación limpia como SVG
 
 ---
 
 ## FASE 4 – PRESETS
 
+### Status
+✅ **COMPLETADA** - Febrero 7, 2026
+
 ### Objetivo
 
-Acelerar flujo creativo y aumentar usabilidad.
+Acelerar flujo creativo y aumentar usabilidad mediante guardar/cargar configuraciones.
 
-### Funcionalidades
+### Funcionalidades implementadas ✅
 
-* Presets predefinidos:
+**Presets predefinidos**:
+  * ✅ Notebook Grid (rejilla clásica)
+  * ✅ Dot Journal (puntos para bullet journals)
+  * ✅ Isometric Paper (perspectiva 3D técnica)
+  * ✅ Minimal Grid (minimalista sutil)
 
-  * Notebook grid
-  * Dot journal
-  * Isometric paper
-  * Minimal grid
-* Botón Load preset
-* Guardar presets personalizados (localStorage)
+**Gestión de presets**:
+  * ✅ Dropdown para cargar cualquier preset
+  * ✅ Guardar presets personalizados con nombre
+  * ✅ Listar presets guardados
+  * ✅ Eliminar presets personalizados
+  * ✅ Persistencia en localStorage
+  * ✅ Sistema versionado para futuras migraciones
+
+### Arquitectura
+
+* `PresetConfig` interface: name, version, predefined flag, PatternState
+* `usePresetManager` hook: load, save, delete, list
+* `PresetsPanel` component: UI completa
+* localStorage key: "patternation_presets" (versionado)
 
 ### Resultado esperado
 
-Uso inmediato sin configuración manual.
+✅ Uso inmediato de plantillas sin configuración manual. Guardado de configuraciones frecuentes sin navegador.
 
 ---
 

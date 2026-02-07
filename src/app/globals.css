@@ -344,6 +344,70 @@ body {
   font-weight: 500;
 }
 
+.btn-danger {
+  background: #d32f2f;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #b71c1c;
+}
+
+/* Alias for consistent button naming */
+.button {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  outline: none;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.button-primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.button-secondary {
+  background: var(--color-secondary);
+  color: white;
+}
+
+.button-secondary:hover:not(:disabled) {
+  background: #1a1a1a;
+}
+
+.button-danger {
+  background: #d32f2f;
+  color: white;
+  font-size: 0.8rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.button-danger:hover:not(:disabled) {
+  background: #b71c1c;
+}
+
 /* =================== PREVIEW COLUMN =================== */
 
 .preview-column {
