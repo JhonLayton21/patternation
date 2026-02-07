@@ -28,6 +28,18 @@ export interface PatternCanvasProps {
      * Optional CSS class for the container div
      */
     className?: string;
+
+    /**
+     * Zoom level for preview (1 = 100%, 0.5 = 50%, 2 = 200%)
+     * @default 1
+     */
+    zoom?: number;
+
+    /**
+     * Show checkerboard background for transparency
+     * @default false
+     */
+    showCheckerboard?: boolean;
 }
 
 /**
@@ -47,15 +59,10 @@ export const PatternCanvas: React.FC<PatternCanvasProps> = ({
     config,
     renderOptions,
     className,
+    zoom = 1,
+    showCheckerboard = false,
 }) => {
     // Generate the SVG string using the pure domain orchestrator
-    // We use useMemo to avoid regenerating on every render if props haven't changed
-    // although the prompt asked for "no internal state", useMemo is standard React optimization
-    // but strictly speaking, "No debe usar estado interno" usually refers to useState.
-    // Given strict requirements "No implementes UI... Enfócate únicamente en lógica", 
-    // and "No debe usar estado interno", I will just call the function directly or use simple memoization if appropriate.
-    // Direct call is simplest and adheres strictly to "no unnecessary abstraction".
-
     let svgString = '';
     try {
         svgString = generatePatternSVG({
@@ -65,15 +72,40 @@ export const PatternCanvas: React.FC<PatternCanvasProps> = ({
         });
     } catch (error) {
         console.error('Failed to generate pattern:', error);
-        // In a real app we might render an error state, but for MVP minimal component:
         return null;
     }
 
-    // Render SVG using dangerouslySetInnerHTML
-    // We wrap it in a div to allow passing className for layout positioning
+    // Combine base classes with custom className
+    const containerClass = `pattern-canvas ${className || ''}`.trim();
+
+    // Generate background style based on checkerboard toggle
+    const getBackgroundStyle = () => {
+        if (showCheckerboard) {
+            return {
+                backgroundImage: `
+                    linear-gradient(45deg, #e0e0e0 25%, transparent 25%),
+                    linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+                    linear-gradient(-45deg, transparent 75%, #e0e0e0 75%)
+                `,
+                backgroundSize: '10px 10px',
+                backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px',
+                backgroundColor: '#ffffff',
+            } as React.CSSProperties;
+        }
+        return {};
+    };
+
+    // Render SVG with zoom and background applied
     return (
         <div
-            className={className}
+            className={containerClass}
+            style={{
+                transform: `scale(${zoom})`,
+                transformOrigin: 'top center',
+                transition: 'transform 0.2s ease-out',
+                ...getBackgroundStyle(),
+            }}
             dangerouslySetInnerHTML={{ __html: svgString }}
         />
     );
