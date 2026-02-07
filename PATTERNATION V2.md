@@ -1,8 +1,27 @@
 # Patternation – MVP v2 Roadmap
 
+**Estado Global**: 🟢 PHASE 2 Completada | 📌 PHASE 3 Siguiente
+
+Última actualización: Febrero 7, 2026
+
 Este documento define la **versión 2 de Patternation** y funciona como **guía operativa para la IA** durante el desarrollo.
 
 Objetivo de v2: convertir Patternation de un MVP funcional a una **herramienta creativa sólida, usable y diferenciada**, manteniendo simplicidad.
+
+---
+
+## PROGRESO DEL ROADMAP
+
+| Fase | Feature | Status |
+|------|---------|--------|
+| 0 (Base) | Architecture v2 + UX Polish | ✅ Completada |
+| 1 | UX/UI Polish | ✅ Completada |
+| 2 | Style Controls | ✅ Completada |
+| 3 | Nuevos tipos de patrón | ⏳ Siguiente |
+| 4 | Presets | 📅 Planificada |
+| 5 | Random & Seed | 📅 Planificada |
+| 6 | Export Avanzado | 📅 Planificada |
+| 7 | Dev/Power Features | 📅 Opcional |
 
 ---
 
@@ -82,22 +101,31 @@ Interfaz más clara, menos fricción, sensación "design tool".
 
 ## FASE 2 – STYLE CONTROLS
 
+### Status
+✅ **COMPLETADA** - Febrero 7, 2026
+
 ### Objetivo
 
 Dar mayor control visual sin complejidad excesiva.
 
-### Nuevos controles
+### Nuevos controles (✅ Implementados)
 
-* Stroke width
-* Stroke opacity
-* Line cap (butt, round, square)
-* Dash / dotted lines
-* Background color
-* Background transparente
+* ✅ Stroke width (slider 0.5-10px)
+* ✅ Stroke opacity (0-100%)
+* ✅ Line cap (butt, round, square)
+* ✅ Dash / dotted lines (solid, dashed, dotted presets)
+* ✅ Background color (color picker)
+* ✅ Background transparente (toggle)
 
 ### Resultado esperado
 
-Patrones más expresivos y listos para uso real.
+✅ Patrones más expresivos y listos para uso real.
+
+**Documentación**:
+- PHASE_2_STYLE_CONTROLS_SUMMARY.md (implementación técnica)
+- PHASE_2_VISUAL_EFFECTS.md (efectos visuales y combinaciones)
+- PHASE_2_IMPLEMENTATION_CHECKLIST.md (validación completa)
+- PHASE_2_QUICK_GUIDE.md (guía de usuario)
 
 ---
 

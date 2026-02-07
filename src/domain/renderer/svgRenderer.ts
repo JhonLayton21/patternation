@@ -87,7 +87,7 @@ function convertElementToSVG(element: PatternElement): string | null {
  * Convierte un elemento rectangle a SVG <rect>
  */
 function convertRectangleToSVG(element: PatternElement): string {
-    const { x, y, width, height, fill, stroke, strokeWidth } = element;
+    const { x, y, width, height, fill, stroke, strokeWidth, data } = element;
 
     const attributes: string[] = [
         `x="${x}"`,
@@ -113,6 +113,21 @@ function convertRectangleToSVG(element: PatternElement): string {
         attributes.push(`stroke-width="${strokeWidth}"`);
     }
 
+    // Stroke opacity
+    if (data?.strokeOpacity !== undefined && data.strokeOpacity !== 1) {
+        attributes.push(`stroke-opacity="${data.strokeOpacity}"`);
+    }
+
+    // Line cap
+    if (data?.lineCap !== undefined && data.lineCap !== 'butt') {
+        attributes.push(`stroke-linecap="${data.lineCap}"`);
+    }
+
+    // Stroke dasharray
+    if (data?.strokeDasharray !== undefined) {
+        attributes.push(`stroke-dasharray="${data.strokeDasharray.join(',')}"`);
+    }
+
     return `<rect ${attributes.join(' ')} />`;
 }
 
@@ -120,7 +135,7 @@ function convertRectangleToSVG(element: PatternElement): string {
  * Convierte un elemento circle a SVG <circle>
  */
 function convertCircleToSVG(element: PatternElement): string {
-    const { x, y, radius, fill, stroke, strokeWidth } = element;
+    const { x, y, radius, fill, stroke, strokeWidth, data } = element;
 
     const attributes: string[] = [
         `cx="${x}"`,
@@ -143,6 +158,21 @@ function convertCircleToSVG(element: PatternElement): string {
     // Stroke width
     if (strokeWidth !== undefined) {
         attributes.push(`stroke-width="${strokeWidth}"`);
+    }
+
+    // Stroke opacity
+    if (data?.strokeOpacity !== undefined && data.strokeOpacity !== 1) {
+        attributes.push(`stroke-opacity="${data.strokeOpacity}"`);
+    }
+
+    // Line cap
+    if (data?.lineCap !== undefined && data.lineCap !== 'butt') {
+        attributes.push(`stroke-linecap="${data.lineCap}"`);
+    }
+
+    // Stroke dasharray
+    if (data?.strokeDasharray !== undefined) {
+        attributes.push(`stroke-dasharray="${data.strokeDasharray.join(',')}"`);
     }
 
     return `<circle ${attributes.join(' ')} />`;
@@ -174,6 +204,21 @@ function convertLineToSVG(element: PatternElement): string {
         attributes.push(`stroke-width="${strokeWidth}"`);
     }
 
+    // Stroke opacity
+    if (data?.strokeOpacity !== undefined && data.strokeOpacity !== 1) {
+        attributes.push(`stroke-opacity="${data.strokeOpacity}"`);
+    }
+
+    // Line cap
+    if (data?.lineCap !== undefined && data.lineCap !== 'butt') {
+        attributes.push(`stroke-linecap="${data.lineCap}"`);
+    }
+
+    // Stroke dasharray
+    if (data?.strokeDasharray !== undefined) {
+        attributes.push(`stroke-dasharray="${data.strokeDasharray.join(',')}"`);
+    }
+
     return `<line ${attributes.join(' ')} />`;
 }
 
@@ -202,6 +247,21 @@ function convertPathToSVG(element: PatternElement): string {
     // Stroke width
     if (strokeWidth !== undefined) {
         attributes.push(`stroke-width="${strokeWidth}"`);
+    }
+
+    // Stroke opacity
+    if (data?.strokeOpacity !== undefined && data.strokeOpacity !== 1) {
+        attributes.push(`stroke-opacity="${data.strokeOpacity}"`);
+    }
+
+    // Line cap
+    if (data?.lineCap !== undefined && data.lineCap !== 'butt') {
+        attributes.push(`stroke-linecap="${data.lineCap}"`);
+    }
+
+    // Stroke dasharray
+    if (data?.strokeDasharray !== undefined) {
+        attributes.push(`stroke-dasharray="${data.strokeDasharray.join(',')}"`);
     }
 
     return `<path ${attributes.join(' ')} />`;

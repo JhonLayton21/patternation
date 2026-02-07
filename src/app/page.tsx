@@ -100,6 +100,32 @@ export default function Home() {
     setConfig((prev) => ({ ...prev, strokeColor: value }));
   };
 
+  const handleStrokeWidthChange = (value: number) => {
+    setConfig((prev) => ({ ...prev, strokeWidth: value }));
+  };
+
+  const handleStrokeOpacityChange = (value: number) => {
+    setConfig((prev) => ({ ...prev, strokeOpacity: value }));
+  };
+
+  const handleLineCapChange = (value: 'butt' | 'round' | 'square') => {
+    setConfig((prev) => ({ ...prev, lineCap: value }));
+  };
+
+  const handleDashPatternChange = (pattern: 'solid' | 'dashed' | 'dotted') => {
+    let dasharray: number[] | undefined;
+    if (pattern === 'dashed') {
+      dasharray = [5, 5];
+    } else if (pattern === 'dotted') {
+      dasharray = [2, 3];
+    }
+    setConfig((prev) => ({ ...prev, strokeDasharray: dasharray }));
+  };
+
+  const handleBackgroundColorChange = (value: string | undefined) => {
+    setConfig((prev) => ({ ...prev, backgroundColor: value }));
+  };
+
   const handleExportWidthChange = (value: number) => {
     setExportWidth(value);
   };
@@ -169,6 +195,11 @@ export default function Home() {
             onCellSizeChange={handleCellSizeChange}
             onGapChange={handleGapChange}
             onStrokeColorChange={handleStrokeColorChange}
+            onStrokeWidthChange={handleStrokeWidthChange}
+            onStrokeOpacityChange={handleStrokeOpacityChange}
+            onLineCapChange={handleLineCapChange}
+            onDashPatternChange={handleDashPatternChange}
+            onBackgroundColorChange={handleBackgroundColorChange}
             onExportWidthChange={handleExportWidthChange}
             onExportHeightChange={handleExportHeightChange}
             onDownloadSVG={handleDownloadSVG}

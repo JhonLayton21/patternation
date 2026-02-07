@@ -20,6 +20,21 @@ export const defaultPatternConfig: PatternConfig = {
     // Trazo fino
     strokeWidth: 1,
 
+    // Trazo opaco
+    strokeOpacity: 1,
+
+    // Línea recta en extremos
+    lineCap: 'butt',
+
+    // Sin patrón discontinuo inicial
+    strokeDasharray: undefined,
+
+    // Fondo blanco por defecto
+    backgroundColor: '#FFFFFF',
+
+    // Fondo opaco
+    backgroundOpacity: 1,
+
     // Dimensiones estándar
     width: 800,
     height: 600,
@@ -33,7 +48,6 @@ export const initialPatternState: GeneratePatternOptions = {
     type: 'grid',
     config: defaultPatternConfig,
     renderOptions: {
-        // Fondo blanco por defecto para asegurar contraste
-        backgroundColor: '#FFFFFF',
+        // backgroundColor se proviene ahora desde config
     },
 };

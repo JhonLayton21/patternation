@@ -65,10 +65,16 @@ export const PatternCanvas: React.FC<PatternCanvasProps> = ({
     // Generate the SVG string using the pure domain orchestrator
     let svgString = '';
     try {
+        // Merge config.backgroundColor into renderOptions if provided
+        const enhancedRenderOptions: SVGRenderOptions = {
+            ...renderOptions,
+            ...(config.backgroundColor && { backgroundColor: config.backgroundColor }),
+        };
+
         svgString = generatePatternSVG({
             type,
             config,
-            renderOptions
+            renderOptions: enhancedRenderOptions
         });
     } catch (error) {
         console.error('Failed to generate pattern:', error);
