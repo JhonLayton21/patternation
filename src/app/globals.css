@@ -408,7 +408,21 @@ body {
   background: #b71c1c;
 }
 
-/* =================== PREVIEW COLUMN =================== */
+.button-success {
+  background: #4caf50;
+  color: white;
+}
+
+.button-success:hover:not(:disabled) {
+  background: #388e3c;
+}
+
+/* Export-specific styles */
+.export-dimensions-display {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}/* =================== PREVIEW COLUMN =================== */
 
 .preview-column {
   flex: 1;

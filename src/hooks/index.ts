@@ -4,3 +4,5 @@
  */
 
 export { usePresetManager } from './usePresetManager';
+export { useClipboard } from './useClipboard';
+

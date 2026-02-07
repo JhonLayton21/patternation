@@ -34,9 +34,10 @@ const GRID_DEFAULTS = {
         strokeWidth: 1,
         strokeOpacity: 1,
         lineCap: 'butt' as const,
+        strokeDasharray: [],
         backgroundColor: undefined,
         backgroundOpacity: 1,
-    } as Required<StyleConfig>,
+    } as StyleConfig,
 };
 
 /**

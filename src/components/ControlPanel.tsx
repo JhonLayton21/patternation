@@ -16,6 +16,7 @@ import type { PatternType } from '@/domain/pattern/PatternType';
 import type { PatternState } from '@/domain/presets';
 import { PresetsPanel } from './PresetsPanel';
 import { RandomizePanel } from './RandomizePanel';
+import { ExportPanel } from './ExportPanel';
 
 export interface ControlPanelProps {
   activeType: PatternType;
@@ -285,54 +286,17 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       {/* DIVIDER */}
       <div className="section-divider"></div>
 
+      {/* DIVIDER */}
+      <div className="section-divider"></div>
+
       {/* SECTION: Export */}
-      <section className="control-section">
-        <h3 className="section-title">Export</h3>
-
-        <div className="control-group">
-          <label htmlFor="export-dimensions" className="control-label">
-            PNG Size (px)
-          </label>
-          <div className="export-dimensions-wrapper">
-            <input
-              id="export-width"
-              type="number"
-              value={exportWidth}
-              onChange={(e) => onExportWidthChange(parseInt(e.target.value, 10))}
-              className="control-input number-input"
-              aria-label="Export Width"
-            />
-            <span className="dimension-separator">×</span>
-            <input
-              id="export-height"
-              type="number"
-              value={exportHeight}
-              onChange={(e) => onExportHeightChange(parseInt(e.target.value, 10))}
-              className="control-input number-input"
-              aria-label="Export Height"
-            />
-          </div>
-        </div>
-
-        <div className="button-group">
-          <button
-            onClick={onDownloadSVG}
-            disabled={isExporting}
-            className="btn btn-primary"
-            title="Download pattern as SVG"
-          >
-            {isExporting ? '⏳ Exporting...' : '↓ Export SVG'}
-          </button>
-          <button
-            onClick={onDownloadPNG}
-            disabled={isExporting}
-            className="btn btn-secondary"
-            title="Download pattern as PNG"
-          >
-            {isExporting ? '⏳ Exporting...' : '↓ Export PNG'}
-          </button>
-        </div>
-      </section>
+      <ExportPanel
+        patternType={activeType}
+        config={config}
+        exportWidth={exportWidth}
+        exportHeight={exportHeight}
+        isExporting={isExporting}
+      />
     </div>
   );
 };

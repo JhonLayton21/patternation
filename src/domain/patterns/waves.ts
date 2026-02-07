@@ -22,9 +22,10 @@ const WAVES_DEFAULTS = {
         strokeWidth: 1,
         strokeOpacity: 1,
         lineCap: 'round' as const,
+        strokeDasharray: [],
         backgroundColor: undefined,
         backgroundOpacity: 1,
-    } as Required<StyleConfig>,
+    } as StyleConfig,
 };
 
 /**
