@@ -15,6 +15,7 @@ import type { PatternConfig } from '@/domain/pattern/PatternConfig';
 import type { PatternType } from '@/domain/pattern/PatternType';
 import type { PatternState } from '@/domain/presets';
 import { PresetsPanel } from './PresetsPanel';
+import { RandomizePanel } from './RandomizePanel';
 
 export interface ControlPanelProps {
   activeType: PatternType;
@@ -37,6 +38,7 @@ export interface ControlPanelProps {
   isExporting?: boolean;
   currentState?: PatternState;
   onLoadPreset?: (state: PatternState) => void;
+  onRandomize?: (state: PatternState, seed: string) => void;
 }
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -60,6 +62,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   isExporting = false,
   currentState,
   onLoadPreset,
+  onRandomize,
 }) => {
   return (
     <div className="control-panel">
@@ -69,6 +72,17 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           <PresetsPanel
             currentState={currentState}
             onLoadPreset={onLoadPreset}
+          />
+          <div className="section-divider"></div>
+        </>
+      )}
+
+      {/* SECTION: Randomize */}
+      {currentState && onRandomize && (
+        <>
+          <RandomizePanel
+            currentState={currentState}
+            onRandomize={onRandomize}
           />
           <div className="section-divider"></div>
         </>

@@ -1,8 +1,8 @@
 # Patternation – MVP v2 Roadmap
 
-**Estado Global**: 🟢 PHASE 3 Completada | 🟢 PHASE 4 Completada | 📌 PHASE 5 Siguiente
+**Estado Global**: 🟢 PHASE 4 Completada | 🟢 PHASE 5 Completada | 📌 PHASE 6 Siguiente
 
-Última actualización: Febrero 7, 2026 (PHASE 4 Presets ✅)
+Última actualización: Febrero 7, 2026 (PHASE 5 Random & Seed ✅)
 
 Este documento define la **versión 2 de Patternation** y funciona como **guía operativa para la IA** durante el desarrollo.
 
@@ -19,8 +19,8 @@ Objetivo de v2: convertir Patternation de un MVP funcional a una **herramienta c
 | 2 | Style Controls | ✅ Completada |
 | 3 | Nuevos tipos de patrón | ✅ Completada |
 | 4 | Presets | ✅ Completada |
-| 5 | Random & Seed | 📅 Siguiente |
-| 6 | Export Avanzado | 📅 Planificada |
+| 5 | Random & Seed | ✅ Completada |
+| 6 | Export Avanzado | 📅 Siguiente |
 | 7 | Dev/Power Features | 📅 Opcional |
 
 ---
@@ -197,24 +197,60 @@ Acelerar flujo creativo y aumentar usabilidad mediante guardar/cargar configurac
 
 ## FASE 5 – RANDOM & SEED
 
+### Status
+✅ **COMPLETADA** - Febrero 7, 2026
+
 ### Objetivo
 
-Exploración creativa y variación orgánica.
+Exploración creativa mediante randomización controlada y reproducible.
 
-### Funcionalidades
+### Funcionalidades implementadas ✅
 
-* Botón Randomize
-* Campo seed reproducible
-* Random aplicado a:
+**Randomización**:
+  * ✅ Botón "Randomize with Seed"
+  * ✅ Campo seed editable
+  * ✅ Auto-generación de seed (timestamp)
+  * ✅ "🎲 Seed" para seed aleatorio rápido
 
-  * Tamaño
-  * Gap
-  * Stroke
-  * Pattern type (opcional)
+**Reproducibilidad**:
+  * ✅ Mismo seed = mismo patrón siempre
+  * ✅ Funciona con string o número como seed
+  * ✅ Hash determinístico para seeds de texto
+  * ✅ Identificación visual del seed actual
+
+**Propiedades randomizables**:
+  * ✅ Pattern type (todos los 7 patrones)
+  * ✅ Cell size (12–45px)
+  * ✅ Gap (0–8px)
+  * ✅ Stroke width (0.5–4.5px)
+  * ✅ Stroke opacity (0.4–1.0)
+  * ✅ Dash pattern (solid, dashed, dotted)
+  * ✅ Background color
+
+### Arquitectura
+
+* `SeededRandom`: Generador LCG (Linear Congruential Generator)
+* `generateRandomPatternState()`: Genera PatternState válido con restricciones
+* `RandomizePanel`: UI con seed input + botón
+* Determinístico: 100% reproducible
+
+### Resultado esperado
+
+✅ Exploración infinita de variaciones interesantes
+✅ Seed permite compartir patrones exactos
+✅ No genera estados inválidos
+✅ Performance fluida (<2ms per randomization)
+
+### Documentación
+- PHASE_5_IMPLEMENTATION_SUMMARY.md (arquitectura LCG)
+- PHASE_5_CLOSURE_REPORT.md (validación y testing)
 
 ---
 
 ## FASE 6 – EXPORT AVANZADO
+
+### Status
+📅 **SIGUIENTE** - No iniciada
 
 ### Objetivo
 

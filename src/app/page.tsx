@@ -10,6 +10,7 @@ import type { PatternConfig } from '@/domain/pattern/PatternConfig';
 import type { PatternType } from '@/domain/pattern/PatternType';
 import type { PatternState } from '@/domain/presets';
 import { usePresetManager } from '@/hooks/usePresetManager';
+import { generateRandomPatternState } from '@/domain/random';
 
 /**
  * Utility to download string content as file (SVG)
@@ -89,8 +90,11 @@ export default function Home() {
   // PHASE 4: Presets
   usePresetManager(); // Initialize preset manager (loads from localStorage)
 
+  // PHASE 5: Random & Seed
+  const [currentSeed, setCurrentSeed] = useState<string>('');
+
   /**
-   * Build current state for preset system
+   * Build current state for preset/random system
    */
   const getCurrentState = (): PatternState => ({
     patternType: activeType,
@@ -127,6 +131,33 @@ export default function Home() {
       lineCap: presetState.lineCap,
       strokeDasharray: dasharray,
       backgroundColor: presetState.backgroundColor
+    });
+  };
+
+  /**
+   * Apply random pattern with seed
+   */
+  const handleRandomize = (randomState: PatternState, seed: string) => {
+    setCurrentSeed(seed);
+    setActiveType(randomState.patternType);
+
+    // Convert strokeDasharray string back to array format if needed
+    let dasharray: number[] | undefined;
+    if (randomState.strokeDasharray === 'dashed') {
+      dasharray = [5, 5];
+    } else if (randomState.strokeDasharray === 'dotted') {
+      dasharray = [2, 3];
+    }
+
+    setConfig({
+      cellSize: randomState.cellSize,
+      gap: randomState.gap,
+      strokeColor: randomState.strokeColor,
+      strokeWidth: randomState.strokeWidth,
+      strokeOpacity: randomState.strokeOpacity,
+      lineCap: randomState.lineCap,
+      strokeDasharray: dasharray,
+      backgroundColor: randomState.backgroundColor
     });
   };
 
@@ -253,6 +284,7 @@ export default function Home() {
             isExporting={isExporting}
             currentState={getCurrentState()}
             onLoadPreset={handleLoadPreset}
+            onRandomize={handleRandomize}
           />
         </aside>
 
