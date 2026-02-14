@@ -12,6 +12,8 @@ import { useClipboard } from '../hooks/useClipboard';
 import { generatePatternSVG } from '@/domain/core/patternOrchestrator';
 import type { PatternType } from '@/domain/pattern/PatternType';
 import type { PatternConfig } from '@/domain/pattern/PatternConfig';
+import { Button } from '@/components/ui/button';
+import { Code, Copy, Check, X } from 'lucide-react';
 
 export interface CodePanelProps {
   patternType: PatternType;
@@ -83,13 +85,13 @@ export function CodePanel({
 
   if (!isVisible) {
     return (
-      <button
+      <Button
         onClick={() => setIsVisible(true)}
         className="button button-secondary button-compact"
         title="Show SVG code"
       >
-        📝 Code
-      </button>
+        <Code/> Code
+      </Button>
     );
   }
 
@@ -98,20 +100,20 @@ export function CodePanel({
       <div className="code-panel-header">
         <h3 className="code-panel-title">Live SVG Code</h3>
         <div className="code-panel-actions">
-          <button
+          <Button
             onClick={handleCopy}
             className="button button-success"
             title="Copy to clipboard"
           >
-            {copied ? '✓ Copied' : '📋 Copy'}
-          </button>
-          <button
+            {copied ? (<> <Check className="h-4 w-4"/> 'Copied' </>) : (<> <Copy className="h-4 w-4"/> 'Copy' </>)}
+          </Button>
+          <Button
             onClick={() => setIsVisible(false)}
             className="button button-secondary button-compact"
             title="Hide code"
           >
-            ✕
-          </button>
+            <X className="h-4 w-4"/>
+          </Button>
         </div>
       </div>
 
