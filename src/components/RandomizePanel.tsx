@@ -12,6 +12,9 @@
 import React, { useState } from 'react';
 import { generateRandomPatternState, generateRandomSeed, isValidSeed } from '@/domain/random';
 import type { PatternState } from '@/domain/presets';
+import { Button } from '@/components/ui/button';
+import { Dices } from 'lucide-react';
+import { Dice2 } from 'lucide-react';
 
 export interface RandomizePanelProps {
   currentState: PatternState;
@@ -77,7 +80,7 @@ export const RandomizePanel: React.FC<RandomizePanelProps> = ({
             className="control-input"
             style={{ flex: 1, fontFamily: 'monospace', fontSize: '0.85rem' }}
           />
-          <button
+          <Button
             onClick={handleGenerateNewSeed}
             className="button button-secondary"
             title="Generate random seed"
@@ -87,8 +90,8 @@ export const RandomizePanel: React.FC<RandomizePanelProps> = ({
               whiteSpace: 'nowrap'
             }}
           >
-            🎲 Seed
-          </button>
+            <Dice2/> Seed
+          </Button>
         </div>
         <div
           style={{
@@ -102,7 +105,7 @@ export const RandomizePanel: React.FC<RandomizePanelProps> = ({
       </div>
 
       {/* Randomize Button */}
-      <button
+      <Button
         onClick={handleRandomize}
         disabled={!isSeedValid}
         className="button button-primary"
@@ -111,8 +114,8 @@ export const RandomizePanel: React.FC<RandomizePanelProps> = ({
           marginTop: '0.5rem'
         }}
       >
-        🎲 Randomize with Seed
-      </button>
+        <Dices/> Randomize with Seed
+      </Button>
 
       {/* Help Text */}
       <div
