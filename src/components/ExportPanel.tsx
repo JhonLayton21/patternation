@@ -167,25 +167,63 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
       </div>
 
       {/* SVG Export Options */}
-      <div className="control-group" style={{ marginTop: '1rem' }}>
-        <label htmlFor="svg-format-select" className="control-label">
+      <div className="control-group mt-4">
+        <label
+          htmlFor="svg-format-select"
+          className="control-label block mb-2 text-sm text-zinc-300"
+        >
           SVG Format
         </label>
-        <select
-          id="svg-format-select"
-          value={svgFormat}
-          onChange={(e) => setSvgFormat(e.target.value as SVGExportFormat)}
-          className="control-input select-input"
-        >
-          <option value="canvas">Canvas (flat)</option>
-          <option value="pattern">Pattern (reusable)</option>
-        </select>
-        <div style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: 'var(--color-text-secondary)' }}>
-          {svgFormat === 'canvas'
-            ? 'Flat SVG, ready for web or design tools'
-            : 'Reusable pattern element for backgrounds'}
+
+        <div className="relative w-full">
+          <select
+            id="svg-format-select"
+            value={svgFormat}
+            onChange={(e) => setSvgFormat(e.target.value as SVGExportFormat)}
+            className="
+        w-full
+        appearance-none
+        bg-zinc-900
+        text-zinc-200
+        border border-zinc-700
+        rounded-lg
+        px-3 py-1.5
+        pr-10
+        text-sm
+        outline-none
+        transition
+        hover:border-zinc-600
+        focus:border-zinc-500
+        focus:ring-1 focus:ring-zinc-500
+        cursor-pointer
+      "
+          >
+            <option value="canvas">Canvas (flat)</option>
+            <option value="pattern">Pattern (reusable)</option>
+          </select>
+
+          {/* Flecha derecha */}
+          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-zinc-400">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Helper text */}
+        <div className="text-xs mt-2 text-zinc-400">
+          {svgFormat === "canvas"
+            ? "Flat SVG, ready for web or design tools"
+            : "Reusable pattern element for backgrounds"}
         </div>
       </div>
+
 
       {/* SVG Buttons */}
       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
@@ -196,7 +234,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
           style={{ flex: 1 }}
           title="Download SVG file"
         >
-          {isExporting ? (<><Loader className="h-4 w-4"/>Exporting...</>) : (<><Download className="h-4 w-4"/>SVG</>)}
+          {isExporting ? (<><Loader className="h-4 w-4" />Exporting...</>) : (<><Download className="h-4 w-4" />SVG</>)}
         </Button>
         <Button
           onClick={handleCopySVG}
@@ -205,7 +243,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
           style={{ flex: 1 }}
           title="Copy SVG to clipboard"
         >
-          {copied ? (<><Check className="h-4 w-4"/>Copied</>) : (<><Copy className="h-4 w-4"/>Copy</>)}
+          {copied ? (<><Check className="h-4 w-4" />Copied</>) : (<><Copy className="h-4 w-4" />Copy</>)}
         </Button>
       </div>
 
@@ -225,7 +263,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
           style={{ fontSize: '0.85rem' }}
           title="Download PNG @1x"
         >
-          {isExporting ? (<><Loader className="h-4 w-4"/>Exporting...</>) : (<><Download className="h-4 w-4"/> @1x</>)}
+          {isExporting ? (<><Loader className="h-4 w-4" />Exporting...</>) : (<><Download className="h-4 w-4" /> @1x</>)}
         </Button>
         <Button
           onClick={() => handleDownloadPNG(2)}
@@ -234,7 +272,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
           style={{ fontSize: '0.85rem' }}
           title="Download PNG @2x (Retina)"
         >
-          {isExporting ? (<><Loader className="h-4 w-4"/>Exporting...</>) : (<><Download className="h-4 w-4"/> @2x</>)}
+          {isExporting ? (<><Loader className="h-4 w-4" />Exporting...</>) : (<><Download className="h-4 w-4" /> @2x</>)}
         </Button>
         <Button
           onClick={() => handleDownloadPNG(3)}
@@ -243,7 +281,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
           style={{ fontSize: '0.85rem' }}
           title="Download PNG @3x (Ultra high-res)"
         >
-          {isExporting ? (<><Loader className="h-4 w-4"/>Exporting...</>) : (<><Download className="h-4 w-4"/> @3x</>)}
+          {isExporting ? (<><Loader className="h-4 w-4" />Exporting...</>) : (<><Download className="h-4 w-4" /> @3x</>)}
         </Button>
       </div>
 
