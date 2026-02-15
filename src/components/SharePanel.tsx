@@ -9,6 +9,8 @@
 import { useState, useCallback } from 'react';
 import { useClipboard } from '../hooks/useClipboard';
 import type { UseShareURLResult } from '../hooks/useShareURL';
+import { Button } from './ui/button';
+import { Link, Copy, X, Check } from 'lucide-react';
 
 export interface SharePanelProps {
   share: UseShareURLResult;
@@ -29,13 +31,14 @@ export function SharePanel({ share }: SharePanelProps) {
 
   if (!isOpen) {
     return (
-      <button
+      <Button
         onClick={() => setIsOpen(true)}
         className="button button-secondary button-compact"
         title="Share pattern"
       >
-        🔗 Share
-      </button>
+        <Link className="h-4 w-4"/>
+        Share
+      </Button>
     );
   }
 
@@ -45,13 +48,13 @@ export function SharePanel({ share }: SharePanelProps) {
     <div className="share-panel section">
       <div className="share-panel-header">
         <h3 className="section-title">Share Pattern</h3>
-        <button
+        <Button
           onClick={() => setIsOpen(false)}
           className="button button-secondary button-compact"
           title="Close"
         >
-          ✕
-        </button>
+          <X className="h-4 w-4"/>
+        </Button>
       </div>
 
       <div className="share-url-container">
@@ -62,13 +65,13 @@ export function SharePanel({ share }: SharePanelProps) {
           className="share-url-input"
           title="Shareable URL"
         />
-        <button
+        <Button
           onClick={handleCopyShare}
           className="button button-success"
           title="Copy URL to clipboard"
         >
-          {copied ? '✓ Copied' : '📋 Copy'}
-        </button>
+          {copied ? (<><Check className="h-4 w-4"/>Copied</>) : (<><Copy className="h-4 w-4"/>Copy</>)}
+        </Button>
       </div>
 
       <p className="share-help text-muted" style={{ fontSize: '0.85rem' }}>
