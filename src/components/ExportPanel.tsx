@@ -22,6 +22,8 @@ import {
 } from '@/domain/export';
 import type { PatternType } from '@/domain/pattern/PatternType';
 import type { PatternConfig } from '@/domain/pattern/PatternConfig';
+import { Button } from '@/components/ui/button';
+import { Copy, Download, Check, Loader } from 'lucide-react';
 
 export interface ExportPanelProps {
   patternType: PatternType;
@@ -187,24 +189,24 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
 
       {/* SVG Buttons */}
       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-        <button
+        <Button
           onClick={handleDownloadSVG}
           disabled={isExporting}
           className="button button-primary"
           style={{ flex: 1 }}
           title="Download SVG file"
         >
-          {isExporting ? '⏳ Exporting...' : '↓ SVG'}
-        </button>
-        <button
+          {isExporting ? (<><Loader className="h-4 w-4"/>Exporting...</>) : (<><Download className="h-4 w-4"/>SVG</>)}
+        </Button>
+        <Button
           onClick={handleCopySVG}
           disabled={isExporting}
           className={`button ${copied ? 'button-success' : 'button-secondary'}`}
           style={{ flex: 1 }}
           title="Copy SVG to clipboard"
         >
-          {copied ? '✓ Copied' : '📋 Copy'}
-        </button>
+          {copied ? (<><Check className="h-4 w-4"/>Copied</>) : (<><Copy className="h-4 w-4"/>Copy</>)}
+        </Button>
       </div>
 
       {/* PNG Export Scales */}
@@ -216,33 +218,33 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
           marginTop: '1rem'
         }}
       >
-        <button
+        <Button
           onClick={() => handleDownloadPNG(1)}
           disabled={isExporting}
           className="button button-secondary"
           style={{ fontSize: '0.85rem' }}
           title="Download PNG @1x"
         >
-          {isExporting ? '⏳' : '↓'} @1x
-        </button>
-        <button
+          {isExporting ? (<><Loader className="h-4 w-4"/>Exporting...</>) : (<><Download className="h-4 w-4"/> @1x</>)}
+        </Button>
+        <Button
           onClick={() => handleDownloadPNG(2)}
           disabled={isExporting}
           className="button button-secondary"
           style={{ fontSize: '0.85rem' }}
           title="Download PNG @2x (Retina)"
         >
-          {isExporting ? '⏳' : '↓'} @2x
-        </button>
-        <button
+          {isExporting ? (<><Loader className="h-4 w-4"/>Exporting...</>) : (<><Download className="h-4 w-4"/> @2x</>)}
+        </Button>
+        <Button
           onClick={() => handleDownloadPNG(3)}
           disabled={isExporting}
           className="button button-secondary"
           style={{ fontSize: '0.85rem' }}
           title="Download PNG @3x (Ultra high-res)"
         >
-          {isExporting ? '⏳' : '↓'} @3x
-        </button>
+          {isExporting ? (<><Loader className="h-4 w-4"/>Exporting...</>) : (<><Download className="h-4 w-4"/> @3x</>)}
+        </Button>
       </div>
 
       {/* Help text */}
