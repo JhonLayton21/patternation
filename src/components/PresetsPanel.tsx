@@ -10,6 +10,7 @@
 import React, { useState } from 'react';
 import { usePresetManager } from '@/hooks/usePresetManager';
 import type { PatternState } from '@/domain/presets';
+import { Button } from '@/components/ui/button';
 
 export interface PresetsPanelProps {
   currentState: PatternState;
@@ -83,13 +84,13 @@ export const PresetsPanel: React.FC<PresetsPanelProps> = ({
       {/* Save Preset */}
       <div className="control-group">
         {!showSaveInput ? (
-          <button
+          <Button
             onClick={() => setShowSaveInput(true)}
             className="button button-secondary"
             style={{ width: '100%' }}
           >
             Guardar como Preset
-          </button>
+          </Button>
         ) : (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <input
