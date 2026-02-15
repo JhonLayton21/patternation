@@ -114,26 +114,68 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       {/* SECTION: Pattern */}
       <section className="control-section">
         <h3 className="section-title">Pattern</h3>
+
         <div className="control-group">
-          <label htmlFor="pattern-select" className="control-label">
+          <label
+            htmlFor="pattern-select"
+            className="control-label block mb-2 text-sm text-zinc-300"
+          >
             Type
           </label>
-          <select
-            id="pattern-select"
-            value={activeType}
-            onChange={(e) => onTypeChange(e.target.value as PatternType)}
-            className="control-input select-input"
-          >
-            <option value="grid">Grid</option>
-            <option value="dots">Dots</option>
-            <option value="diagonalGrid">Diagonal Grid</option>
-            <option value="isometric">Isometric</option>
-            <option value="zigzag">Zig-zag</option>
-            <option value="waves">Waves</option>
-            <option value="cross">Cross</option>
-          </select>
+
+          {/* wrapper para la flecha */}
+          <div className="relative w-full">
+            <select
+              id="pattern-select"
+              value={activeType}
+              onChange={(e) => onTypeChange(e.target.value as PatternType)}
+              className="
+          w-full
+          appearance-none
+          bg-zinc-900
+          text-zinc-200
+          border border-zinc-700
+          rounded-lg
+          px-3 py-1.5
+          pr-10
+          text-sm
+          outline-none
+          transition
+          hover:border-zinc-600
+          focus:border-zinc-500
+          focus:ring-1 focus:ring-zinc-500
+          cursor-pointer
+        "
+            >
+              <option value="grid">Grid</option>
+              <option value="dots">Dots</option>
+              <option value="diagonalGrid">Diagonal Grid</option>
+              <option value="isometric">Isometric</option>
+              <option value="zigzag">Zig-zag</option>
+              <option value="waves">Waves</option>
+              <option value="cross">Cross</option>
+            </select>
+
+            {/* Flecha derecha */}
+            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-zinc-400">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
         </div>
       </section>
+
 
       {/* DIVIDER */}
       <div className="section-divider"></div>
