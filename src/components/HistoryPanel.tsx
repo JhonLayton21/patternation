@@ -7,6 +7,8 @@
  */
 
 import type { UsePatternHistoryResult } from '../hooks/usePatternHistory';
+import { Button } from './ui/button';
+import { Undo2, Redo2 } from 'lucide-react';
 
 export interface HistoryPanelProps {
   history: UsePatternHistoryResult;
@@ -18,23 +20,25 @@ export function HistoryPanel({ history }: HistoryPanelProps) {
       <h3 className="section-title">History</h3>
 
       <div className="history-controls">
-        <button
+        <Button
           onClick={history.undo}
           disabled={!history.canUndo}
           className="button button-secondary"
           title={`Undo (${history.historyLength} states)`}
         >
-          ↶ Undo
-        </button>
+          <Undo2 className="h-4 w-4"/>
+          Undo
+        </Button>
 
-        <button
+        <Button
           onClick={history.redo}
           disabled={!history.canRedo}
           className="button button-secondary"
           title="Redo"
         >
-          ↷ Redo
-        </button>
+          <Redo2 className="h-4 w-4"/>
+          Redo
+        </Button>
 
         <span className="history-length">
           {history.historyLength} state{history.historyLength !== 1 ? 's' : ''}
