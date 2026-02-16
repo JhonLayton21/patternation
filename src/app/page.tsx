@@ -364,7 +364,6 @@ export default function Home() {
             isExporting={isExporting}
             currentState={getCurrentState()}
             onLoadPreset={handleLoadPreset}
-            onRandomize={handleRandomize}
             // PHASE 7: Advanced features
             history={history}
             share={share}
