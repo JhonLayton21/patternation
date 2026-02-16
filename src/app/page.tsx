@@ -334,8 +334,8 @@ export default function Home() {
       {/* HEADER */}
       <header className="app-header">
         <div className="header-content">
-          <h1 className="app-title">Patternation</h1>
-          <p className="app-subtitle">Generador de patrones creativo</p>
+          <h1 className="app-title text-4xl!">Patternation</h1>
+          <p className="app-subtitle text-xl!">Generador de patrones creativo</p>
         </div>
       </header>
 
