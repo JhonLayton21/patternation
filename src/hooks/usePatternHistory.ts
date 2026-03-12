@@ -7,7 +7,7 @@
  * Tracks all state changes (pattern, geometry, style)
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import type { FullPatternState } from '../domain/share/urlStateCodec';
 
 export interface HistoryItem {
@@ -116,7 +116,7 @@ export function usePatternHistory(
     setFuture([]);
   }, [past]);
 
-  return {
+  return useMemo(() => ({
     canUndo: past.length > 1,
     canRedo: future.length > 0,
     historyLength: past.length,
@@ -124,5 +124,5 @@ export function usePatternHistory(
     redo,
     pushState,
     clearHistory,
-  };
+  }), [past, future, undo, redo, pushState, clearHistory]);
 }

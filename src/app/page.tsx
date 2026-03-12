@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import PatternCanvas from '@/components/PatternCanvas';
 import ControlPanel from '@/components/ControlPanel';
 import PreviewControls from '@/components/PreviewControls';
@@ -98,8 +98,9 @@ export default function Home() {
   /**
    * Build FULL current state for preset/random/history/share systems
    * Includes UI state (zoom, checkerboard) for URL sharing
+   * MEMOIZED to prevent unstable object references causing infinite re-renders
    */
-  const getCurrentFullState = (): PatternState => ({
+  const getCurrentFullState = useCallback((): PatternState => ({
     patternType: activeType,
     geometry: {
       cellSize: config.cellSize ?? 20,
@@ -118,7 +119,7 @@ export default function Home() {
     },
     zoom,
     checkerboard: showCheckerboard,
-  });
+  }), [activeType, config.cellSize, config.gap, config.strokeColor, config.strokeWidth, config.strokeOpacity, config.lineCap, config.strokeDasharray, config.backgroundColor, exportWidth, exportHeight, zoom, showCheckerboard]);
 
   /**
    * Build legacy state for presets (backward compatible)
@@ -136,7 +137,9 @@ export default function Home() {
   });
 
   // PHASE 7: History (Undo/Redo)
-  const history = usePatternHistory(getCurrentFullState(), (state) => {
+  // MEMOIZED: Use useMemo to get the current state value without recreating callback
+  const currentFullState = useMemo(() => getCurrentFullState(), [getCurrentFullState]);
+  const history = usePatternHistory(currentFullState, useCallback((state) => {
     // Apply state from history
     setActiveType(state.patternType);
     setConfig({
@@ -153,10 +156,11 @@ export default function Home() {
     setExportHeight(state.geometry.height);
     setZoom(state.zoom ?? 1);
     setShowCheckerboard(state.checkerboard ?? false);
-  });
+  }, []));
 
   // PHASE 7: Share (URL state)
-  const share = useShareURL(getCurrentFullState(), (state) => {
+  // Use memoized state and callback to prevent unstable references
+  const share = useShareURL(currentFullState, useCallback((state) => {
     // Load state from URL on first mount
     setActiveType(state.patternType);
     setConfig({
@@ -173,7 +177,7 @@ export default function Home() {
     setExportHeight(state.geometry.height);
     setZoom(state.zoom ?? 1);
     setShowCheckerboard(state.checkerboard ?? false);
-  });
+  }, []));
 
   /**
    * Load a preset: apply all its values to the current state
@@ -231,15 +235,15 @@ export default function Home() {
   /**
    * Track state changes for history
    * Push to history when pattern/geometry/style changes
+   * FIX: Use currentFullState and history.pushState from hook - compare individual values not objects
    */
   useEffect(() => {
-    const newState = getCurrentFullState();
     // Use a small delay to batch rapid changes
     const timer = setTimeout(() => {
-      history.pushState(newState, 'Pattern modified');
+      history.pushState(currentFullState, 'Pattern modified');
     }, 300);
     return () => clearTimeout(timer);
-  }, [activeType, config, exportWidth, exportHeight]);
+  }, [currentFullState, history]);
 
   const handleTypeChange = (type: PatternType) => {
     setActiveType(type);

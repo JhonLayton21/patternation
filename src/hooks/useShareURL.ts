@@ -7,7 +7,7 @@
  * Encodes/decodes PatternState from URL
  */
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { generateShareURL, getStateFromURL } from '../domain/share/urlStateCodec';
 import type { FullPatternState } from '../domain/share/urlStateCodec';
 
@@ -28,12 +28,14 @@ export function useShareURL(
   state: FullPatternState,
   onStateLoaded?: (state: FullPatternState) => void
 ): UseShareURLResult {
-  // Load state from URL on mount
+  // Load state from URL on mount only
+  // FIXED: Verify onStateLoaded is stable (wrapped in useCallback in page.tsx)
   useEffect(() => {
     const urlState = getStateFromURL();
     if (urlState && onStateLoaded) {
       onStateLoaded(urlState);
     }
+    // Only run on mount - onStateLoaded should be stable if wrapped in useCallback
   }, [onStateLoaded]);
 
   const getShareURL = useCallback(() => {

@@ -9,7 +9,7 @@
  * - CRUD básico (create, read, delete)
  */
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { DEFAULT_PRESETS, type PresetConfig, type PatternState, type PresetStore } from '@/domain/presets';
 
 const STORAGE_KEY = 'patternation_presets';
@@ -64,11 +64,16 @@ export function usePresetManager() {
     }
   }, [customPresets, isLoaded]);
 
-  // Todos los presets: predefinidos + guardados
-  const allPresets = [...DEFAULT_PRESETS, ...customPresets];
+  // FIXED: Memoize allPresets array to prevent creating new reference on every render
+  // This prevents loadPreset callback from changing needlessly, avoiding cascading re-renders
+  const allPresets = useMemo(() => 
+    [...DEFAULT_PRESETS, ...customPresets],
+    [customPresets]
+  );
 
   /**
    * Cargar un preset: retorna su configuración
+   * FIXED: Depend only on customPresets (via allPresets memo), not the array itself
    */
   const loadPreset = useCallback((presetId: string): PatternState | null => {
     const preset = allPresets.find(p => p.id === presetId);
