@@ -1,27 +1,34 @@
 /**
  * ControlPanel Component
- * 
+ *
  * Organiza todos los controles existentes en 4 secciones claras:
  * - Pattern Type
  * - Geometry (cellSize, gap)
  * - Style (strokeColor)
  * - Export (PNG size, buttons)
- * 
+ *
  * Props son callbacks, este componente es "presentational" y scanneable
  */
 
-import React from 'react';
-import type { PatternConfig } from '@/domain/pattern/PatternConfig';
-import type { PatternType } from '@/domain/pattern/PatternType';
-import type { PatternState } from '@/domain/presets';
-import { PresetsPanel } from './PresetsPanel';
-import { RandomizePanel } from './RandomizePanel';
-import { ExportPanel } from './ExportPanel';
-import { HistoryPanel } from './HistoryPanel';
-import { SharePanel } from './SharePanel';
-import { CodePanel } from './CodePanel';
-import type { UsePatternHistoryResult } from '@/hooks/usePatternHistory';
-import type { UseShareURLResult } from '@/hooks/useShareURL';
+import React from "react";
+import type { PatternConfig } from "@/domain/pattern/PatternConfig";
+import type { PatternType } from "@/domain/pattern/PatternType";
+import type { PatternState } from "@/domain/presets";
+import { PresetsPanel } from "./PresetsPanel";
+import { RandomizePanel } from "./RandomizePanel";
+import { ExportPanel } from "./ExportPanel";
+import { HistoryPanel } from "./HistoryPanel";
+import { SharePanel } from "./SharePanel";
+import { CodePanel } from "./CodePanel";
+import type { UsePatternHistoryResult } from "@/hooks/usePatternHistory";
+import type { UseShareURLResult } from "@/hooks/useShareURL";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export interface ControlPanelProps {
   activeType: PatternType;
@@ -34,8 +41,8 @@ export interface ControlPanelProps {
   onStrokeColorChange: (value: string) => void;
   onStrokeWidthChange: (value: number) => void;
   onStrokeOpacityChange: (value: number) => void;
-  onLineCapChange: (value: 'butt' | 'round' | 'square') => void;
-  onDashPatternChange: (pattern: 'solid' | 'dashed' | 'dotted') => void;
+  onLineCapChange: (value: "butt" | "round" | "square") => void;
+  onDashPatternChange: (pattern: "solid" | "dashed" | "dotted") => void;
   onBackgroundColorChange: (value: string | undefined) => void;
   onExportWidthChange: (value: number) => void;
   onExportHeightChange: (value: number) => void;
@@ -111,7 +118,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         </>
       )}
 
-      {/* SECTION: Pattern */}
+      {/* SECTION: Pattern type */}
       <section className="control-section">
         <h3 className="section-title">Pattern</h3>
 
@@ -123,59 +130,37 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             Type
           </label>
 
-          {/* wrapper para la flecha */}
-          <div className="relative w-full">
-            <select
+          <Select
+            value={activeType}
+            onValueChange={(value) => onTypeChange(value as PatternType)}
+          >
+            <SelectTrigger
               id="pattern-select"
-              value={activeType}
-              onChange={(e) => onTypeChange(e.target.value as PatternType)}
               className="
           w-full
-          appearance-none
           bg-zinc-900
           text-zinc-200
-          border border-zinc-700
-          rounded-lg
-          px-3 py-1.5
-          pr-10
+          border-zinc-700
           text-sm
-          outline-none
-          transition
           hover:border-zinc-600
-          focus:border-zinc-500
-          focus:ring-1 focus:ring-zinc-500
-          cursor-pointer
+          focus:ring-zinc-500
         "
             >
-              <option value="grid">Grid</option>
-              <option value="dots">Dots</option>
-              <option value="diagonalGrid">Diagonal Grid</option>
-              <option value="isometric">Isometric</option>
-              <option value="zigzag">Zig-zag</option>
-              <option value="waves">Waves</option>
-              <option value="cross">Cross</option>
-            </select>
+              <SelectValue placeholder="Select pattern" />
+            </SelectTrigger>
 
-            {/* Flecha derecha */}
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-zinc-400">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-          </div>
+            <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
+              <SelectItem value="grid">Grid</SelectItem>
+              <SelectItem value="dots">Dots</SelectItem>
+              <SelectItem value="diagonalGrid">Diagonal Grid</SelectItem>
+              <SelectItem value="isometric">Isometric</SelectItem>
+              <SelectItem value="zigzag">Zig-zag</SelectItem>
+              <SelectItem value="waves">Waves</SelectItem>
+              <SelectItem value="cross">Cross</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </section>
-
 
       {/* DIVIDER */}
       <div className="section-divider"></div>
@@ -238,11 +223,13 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             <input
               id="color-picker"
               type="color"
-              value={config.strokeColor ?? '#000000'}
+              value={config.strokeColor ?? "#000000"}
               onChange={(e) => onStrokeColorChange(e.target.value)}
               className="control-input color-input"
             />
-            <span className="color-value">{config.strokeColor ?? '#000000'}</span>
+            <span className="color-value">
+              {config.strokeColor ?? "#000000"}
+            </span>
           </div>
         </div>
 
@@ -270,7 +257,9 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             <label htmlFor="stroke-opacity-slider" className="control-label">
               Opacity
             </label>
-            <span className="control-value">{Math.round((config.strokeOpacity ?? 1) * 100)}%</span>
+            <span className="control-value">
+              {Math.round((config.strokeOpacity ?? 1) * 100)}%
+            </span>
           </div>
           <input
             id="stroke-opacity-slider"
@@ -330,12 +319,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 strokeWidth="2"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
         </div>
-
 
         <div className="control-group">
           <label
@@ -350,9 +342,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               id="dash-pattern-select"
               value={(() => {
                 if (!config.strokeDasharray) return "solid";
-                if (JSON.stringify(config.strokeDasharray) === JSON.stringify([5, 5]))
+                if (
+                  JSON.stringify(config.strokeDasharray) ===
+                  JSON.stringify([5, 5])
+                )
                   return "dashed";
-                if (JSON.stringify(config.strokeDasharray) === JSON.stringify([2, 3]))
+                if (
+                  JSON.stringify(config.strokeDasharray) ===
+                  JSON.stringify([2, 3])
+                )
                   return "dotted";
                 return "solid";
               })()}
@@ -391,12 +389,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 strokeWidth="2"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
         </div>
-
 
         <div className="control-group">
           <label htmlFor="bg-color-picker" className="control-label">
@@ -406,7 +407,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             <input
               id="bg-color-picker"
               type="color"
-              value={config.backgroundColor ?? '#ffffff'}
+              value={config.backgroundColor ?? "#ffffff"}
               onChange={(e) => onBackgroundColorChange(e.target.value)}
               className="control-input color-input"
             />
