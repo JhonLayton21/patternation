@@ -281,52 +281,25 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             Line Cap
           </label>
 
-          <div className="relative w-full">
-            <select
+          <Select
+            value={config.lineCap ?? "butt"}
+            onValueChange={(value) =>
+              onLineCapChange(value as "butt" | "round" | "square")
+            }
+          >
+            <SelectTrigger
               id="line-cap-select"
-              value={config.lineCap ?? "butt"}
-              onChange={(e) =>
-                onLineCapChange(e.target.value as "butt" | "round" | "square")
-              }
-              className="
-        w-full
-        appearance-none
-        bg-zinc-900
-        text-zinc-200
-        border border-zinc-700
-        rounded-lg
-        px-3 py-1.5
-        pr-10
-        text-sm
-        outline-none
-        transition
-        hover:border-zinc-600
-        focus:border-zinc-500
-        focus:ring-1 focus:ring-zinc-500
-        cursor-pointer
-      "
+              className="w-full bg-zinc-900 text-zinc-200 border-zinc-700 text-sm hover:border-zinc-600 focus:ring-zinc-500"
             >
-              <option value="butt">Butt (Flat)</option>
-              <option value="round">Round</option>
-              <option value="square">Square</option>
-            </select>
+              <SelectValue />
+            </SelectTrigger>
 
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-zinc-400">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-          </div>
+            <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
+              <SelectItem value="butt">Butt (Flat)</SelectItem>
+              <SelectItem value="round">Round</SelectItem>
+              <SelectItem value="square">Square</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="control-group">
@@ -337,66 +310,39 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             Line Style
           </label>
 
-          <div className="relative w-full">
-            <select
+          <Select
+            value={(() => {
+              if (!config.strokeDasharray) return "solid";
+              if (
+                JSON.stringify(config.strokeDasharray) ===
+                JSON.stringify([5, 5])
+              )
+                return "dashed";
+              if (
+                JSON.stringify(config.strokeDasharray) ===
+                JSON.stringify([2, 3])
+              )
+                return "dotted";
+              return "solid";
+            })()}
+            onValueChange={(value) => {
+              const val = value as "solid" | "dashed" | "dotted";
+              onDashPatternChange(val);
+            }}
+          >
+            <SelectTrigger
               id="dash-pattern-select"
-              value={(() => {
-                if (!config.strokeDasharray) return "solid";
-                if (
-                  JSON.stringify(config.strokeDasharray) ===
-                  JSON.stringify([5, 5])
-                )
-                  return "dashed";
-                if (
-                  JSON.stringify(config.strokeDasharray) ===
-                  JSON.stringify([2, 3])
-                )
-                  return "dotted";
-                return "solid";
-              })()}
-              onChange={(e) => {
-                const val = e.target.value as "solid" | "dashed" | "dotted";
-                onDashPatternChange(val);
-              }}
-              className="
-        w-full
-        appearance-none
-        bg-zinc-900
-        text-zinc-200
-        border border-zinc-700
-        rounded-lg
-        px-3 py-1.5
-        pr-10
-        text-sm
-        outline-none
-        transition
-        hover:border-zinc-600
-        focus:border-zinc-500
-        focus:ring-1 focus:ring-zinc-500
-        cursor-pointer
-      "
+              className="w-full bg-zinc-900 text-zinc-200 border-zinc-700 text-sm hover:border-zinc-600 focus:ring-zinc-500"
             >
-              <option value="solid">Solid</option>
-              <option value="dashed">Dashed</option>
-              <option value="dotted">Dotted</option>
-            </select>
+              <SelectValue />
+            </SelectTrigger>
 
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-zinc-400">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-          </div>
+            <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
+              <SelectItem value="solid">Solid</SelectItem>
+              <SelectItem value="dashed">Dashed</SelectItem>
+              <SelectItem value="dotted">Dotted</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="control-group">
