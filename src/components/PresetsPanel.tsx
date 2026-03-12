@@ -1,16 +1,17 @@
-'use client';
+"use client";
 
 /**
  * PHASE 4: PresetsPanel Component
- * 
+ *
  * UI para cargar, guardar y gestionar presets
  * Se integra en el ControlPanel
  */
 
-import React, { useState } from 'react';
-import { usePresetManager } from '@/hooks/usePresetManager';
-import type { PatternState } from '@/domain/presets';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { usePresetManager } from "@/hooks/usePresetManager";
+import type { PatternState } from "@/domain/presets";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 export interface PresetsPanelProps {
   currentState: PatternState;
@@ -19,10 +20,17 @@ export interface PresetsPanelProps {
 
 export const PresetsPanel: React.FC<PresetsPanelProps> = ({
   currentState,
-  onLoadPreset
+  onLoadPreset,
 }) => {
-  const { allPresets, customPresets, loadPreset, savePreset, deletePreset, ready } = usePresetManager();
-  const [saveInputValue, setSaveInputValue] = useState('');
+  const {
+    allPresets,
+    customPresets,
+    loadPreset,
+    savePreset,
+    deletePreset,
+    ready,
+  } = usePresetManager();
+  const [saveInputValue, setSaveInputValue] = useState("");
   const [showSaveInput, setShowSaveInput] = useState(false);
 
   const handleLoadPreset = (presetId: string) => {
@@ -37,7 +45,7 @@ export const PresetsPanel: React.FC<PresetsPanelProps> = ({
     if (!name) return;
 
     savePreset(name, currentState);
-    setSaveInputValue('');
+    setSaveInputValue("");
     setShowSaveInput(false);
   };
 
@@ -60,25 +68,30 @@ export const PresetsPanel: React.FC<PresetsPanelProps> = ({
         <label htmlFor="preset-select" className="control-label">
           Load Preset
         </label>
-        <select
-          id="preset-select"
-          onChange={(e) => {
-            if (e.target.value) {
-              handleLoadPreset(e.target.value);
-              e.target.value = '';
+
+        <Select
+          onValueChange={(value) => {
+            if (value) {
+              handleLoadPreset(value);
             }
           }}
-          className="control-input select-input"
-          defaultValue=""
         >
-          <option value="">Selecciona un preset...</option>
-          {allPresets.map(preset => (
-            <option key={preset.id} value={preset.id}>
-              {preset.name}
-              {!preset.predefined ? ' (custom)' : ''}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger
+            id="preset-select"
+            className="w-full bg-zinc-900 text-zinc-200 border-zinc-700 hover:border-zinc-600 focus:ring-zinc-500"
+          >
+            <SelectValue placeholder="Selecciona un preset..." />
+          </SelectTrigger>
+
+          <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
+            {allPresets.map((preset) => (
+              <SelectItem key={preset.id} value={preset.id}>
+                {preset.name}
+                {!preset.predefined ? " (custom)" : ""}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Save Preset */}
@@ -87,21 +100,21 @@ export const PresetsPanel: React.FC<PresetsPanelProps> = ({
           <Button
             onClick={() => setShowSaveInput(true)}
             className="button button-secondary"
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           >
             Guardar como Preset
           </Button>
         ) : (
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
             <input
               type="text"
               placeholder="Nombre del preset..."
               value={saveInputValue}
               onChange={(e) => setSaveInputValue(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSavePreset();
-                if (e.key === 'Escape') {
-                  setSaveInputValue('');
+                if (e.key === "Enter") handleSavePreset();
+                if (e.key === "Escape") {
+                  setSaveInputValue("");
                   setShowSaveInput(false);
                 }
               }}
@@ -112,17 +125,17 @@ export const PresetsPanel: React.FC<PresetsPanelProps> = ({
             <button
               onClick={handleSavePreset}
               className="button button-primary"
-              style={{ flex: '0 0 auto' }}
+              style={{ flex: "0 0 auto" }}
             >
               ✓
             </button>
             <button
               onClick={() => {
-                setSaveInputValue('');
+                setSaveInputValue("");
                 setShowSaveInput(false);
               }}
               className="button button-secondary"
-              style={{ flex: '0 0 auto' }}
+              style={{ flex: "0 0 auto" }}
             >
               ✕
             </button>
@@ -132,26 +145,28 @@ export const PresetsPanel: React.FC<PresetsPanelProps> = ({
 
       {/* Custom Presets List */}
       {customPresets.length > 0 && (
-        <div className="control-group" style={{ marginTop: '1rem' }}>
+        <div className="control-group" style={{ marginTop: "1rem" }}>
           <label className="control-label">Mis Presets</label>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            maxHeight: '200px',
-            overflowY: 'auto'
-          }}>
-            {customPresets.map(preset => (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+              maxHeight: "200px",
+              overflowY: "auto",
+            }}
+          >
+            {customPresets.map((preset) => (
               <div
                 key={preset.id}
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '0.75rem',
-                  backgroundColor: '#f5f5f5',
-                  borderRadius: '0.25rem',
-                  fontSize: '0.875rem'
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "0.75rem",
+                  backgroundColor: "#f5f5f5",
+                  borderRadius: "0.25rem",
+                  fontSize: "0.875rem",
                 }}
               >
                 <span>{preset.name}</span>
@@ -159,8 +174,8 @@ export const PresetsPanel: React.FC<PresetsPanelProps> = ({
                   onClick={() => handleDeletePreset(preset.id)}
                   className="button button-danger"
                   style={{
-                    padding: '0.25rem 0.5rem',
-                    fontSize: '0.75rem'
+                    padding: "0.25rem 0.5rem",
+                    fontSize: "0.75rem",
                   }}
                 >
                   Eliminar
