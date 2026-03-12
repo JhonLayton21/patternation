@@ -24,6 +24,7 @@ import type { PatternType } from '@/domain/pattern/PatternType';
 import type { PatternConfig } from '@/domain/pattern/PatternConfig';
 import { Button } from '@/components/ui/button';
 import { Copy, Download, Check, Loader } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 export interface ExportPanelProps {
   patternType: PatternType;
@@ -168,61 +169,45 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
 
       {/* SVG Export Options */}
       <div className="control-group mt-4">
-        <label
-          htmlFor="svg-format-select"
-          className="control-label block mb-2 text-sm text-zinc-300"
-        >
-          SVG Format
-        </label>
+  <label
+    htmlFor="svg-format-select"
+    className="control-label block mb-2 text-sm text-zinc-300"
+  >
+    SVG Format
+  </label>
 
-        <div className="relative w-full">
-          <select
-            id="svg-format-select"
-            value={svgFormat}
-            onChange={(e) => setSvgFormat(e.target.value as SVGExportFormat)}
-            className="
+  <Select
+    value={svgFormat}
+    onValueChange={(value) => setSvgFormat(value as SVGExportFormat)}
+  >
+    <SelectTrigger
+      id="svg-format-select"
+      className="
         w-full
-        appearance-none
         bg-zinc-900
         text-zinc-200
-        border border-zinc-700
-        rounded-lg
-        px-3 py-1.5
-        pr-10
+        border-zinc-700
         text-sm
-        outline-none
-        transition
         hover:border-zinc-600
-        focus:border-zinc-500
-        focus:ring-1 focus:ring-zinc-500
-        cursor-pointer
+        focus:ring-zinc-500
       "
-          >
-            <option value="canvas">Canvas (flat)</option>
-            <option value="pattern">Pattern (reusable)</option>
-          </select>
+    >
+      <SelectValue placeholder="Select format" />
+    </SelectTrigger>
 
-          {/* Flecha derecha */}
-          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-zinc-400">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-        </div>
+    <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
+      <SelectItem value="canvas">Canvas (flat)</SelectItem>
+      <SelectItem value="pattern">Pattern (reusable)</SelectItem>
+    </SelectContent>
+  </Select>
 
-        {/* Helper text */}
-        <div className="text-xs mt-2 text-zinc-400">
-          {svgFormat === "canvas"
-            ? "Flat SVG, ready for web or design tools"
-            : "Reusable pattern element for backgrounds"}
-        </div>
-      </div>
+  {/* Helper text */}
+  <div className="text-xs mt-2 text-zinc-400">
+    {svgFormat === "canvas"
+      ? "Flat SVG, ready for web or design tools"
+      : "Reusable pattern element for backgrounds"}
+  </div>
+</div>
 
 
       {/* SVG Buttons */}
