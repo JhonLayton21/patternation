@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
 /**
  * PHASE 6: ExportPanel Component
- * 
+ *
  * Advanced export with multiple formats (SVG pattern/canvas, PNG @1x/@2x/@3x)
  * File info, clipboard copy, and visual feedback
  */
 
-import React, { useState, useMemo } from 'react';
-import { useClipboard } from '@/hooks/useClipboard';
+import React, { useState, useMemo } from "react";
+import { useClipboard } from "@/hooks/useClipboard";
 import {
   generateSVGCanvas,
   generateSVGPattern,
@@ -18,13 +18,19 @@ import {
   formatDimensions,
   exportPNGWithScale,
   type SVGExportFormat,
-  type PNGScale
-} from '@/domain/export';
-import type { PatternType } from '@/domain/pattern/PatternType';
-import type { PatternConfig } from '@/domain/pattern/PatternConfig';
-import { Button } from '@/components/ui/button';
-import { Copy, Download, Check, Loader } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+  type PNGScale,
+} from "@/domain/export";
+import type { PatternType } from "@/domain/pattern/PatternType";
+import type { PatternConfig } from "@/domain/pattern/PatternConfig";
+import { Button } from "@/components/ui/button";
+import { Copy, Download, Check, Loader } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export interface ExportPanelProps {
   patternType: PatternType;
@@ -43,38 +49,40 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
   exportHeight,
   isExporting = false,
   onExportStart,
-  onExportComplete
+  onExportComplete,
 }) => {
-  const [svgFormat, setSvgFormat] = useState<SVGExportFormat>('canvas');
+  const [svgFormat, setSvgFormat] = useState<SVGExportFormat>("canvas");
   const { copied, copy } = useClipboard(2000);
 
   // Generate SVG strings
   const svgCanvas = useMemo(
     () => generateSVGCanvas(patternType, config, exportWidth, exportHeight),
-    [patternType, config, exportWidth, exportHeight]
+    [patternType, config, exportWidth, exportHeight],
   );
 
   const svgPattern = useMemo(
     () => generateSVGPattern(patternType, config, exportWidth, exportHeight),
-    [patternType, config, exportWidth, exportHeight]
+    [patternType, config, exportWidth, exportHeight],
   );
 
   // Get SVG to show (based on format)
-  const activeSVG = svgFormat === 'pattern' ? svgPattern : svgCanvas;
+  const activeSVG = svgFormat === "pattern" ? svgPattern : svgCanvas;
   const minifiedSVG = minifySVG(activeSVG);
 
   // Calculate file info
   const fileInfo = useMemo(
     () => calculateExportInfo(minifiedSVG, exportWidth, exportHeight),
-    [minifiedSVG, exportWidth, exportHeight]
+    [minifiedSVG, exportWidth, exportHeight],
   );
 
   const handleDownloadSVG = async () => {
     onExportStart?.();
     try {
-      const blob = new Blob([activeSVG], { type: 'image/svg+xml;charset=utf-8' });
+      const blob = new Blob([activeSVG], {
+        type: "image/svg+xml;charset=utf-8",
+      });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `pattern-${patternType}-${svgFormat}.svg`;
       document.body.appendChild(link);
@@ -99,10 +107,10 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
         exportHeight,
         scale,
         config.backgroundColor,
-        `pattern-${patternType}@${scale}x.png`
+        `pattern-${patternType}@${scale}x.png`,
       );
     } catch (error) {
-      console.error('PNG export failed:', error);
+      console.error("PNG export failed:", error);
     } finally {
       setTimeout(() => onExportComplete?.(), 300);
     }
@@ -124,7 +132,11 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
             aria-label="Export Width"
             style={{ flex: 1 }}
           />
-          <span style={{ padding: '0.5rem', color: 'var(--color-text-secondary)' }}>×</span>
+          <span
+            style={{ padding: "0.5rem", color: "var(--color-text-secondary)" }}
+          >
+            ×
+          </span>
           <input
             type="number"
             value={exportHeight}
@@ -134,7 +146,13 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
             style={{ flex: 1 }}
           />
         </div>
-        <div style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: 'var(--color-text-secondary)' }}>
+        <div
+          style={{
+            fontSize: "0.75rem",
+            marginTop: "0.5rem",
+            color: "var(--color-text-secondary)",
+          }}
+        >
           {formatDimensions(exportWidth, exportHeight)}
         </div>
       </div>
@@ -142,47 +160,61 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
       {/* File Info */}
       <div
         style={{
-          padding: '0.75rem',
-          backgroundColor: 'var(--color-bg-subtle)',
-          borderRadius: 'var(--radius-md)',
-          fontSize: '0.8rem',
-          marginTop: '0.75rem'
+          padding: "0.75rem",
+          backgroundColor: "var(--color-bg-subtle)",
+          borderRadius: "var(--radius-md)",
+          fontSize: "0.8rem",
+          marginTop: "0.75rem",
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "0.5rem",
+          }}
+        >
           <span>SVG:</span>
-          <span style={{ fontWeight: 600 }}>{formatFileSize(fileInfo.svgSize)}</span>
+          <span style={{ fontWeight: 600 }}>
+            {formatFileSize(fileInfo.svgSize)}
+          </span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <span>PNG @1x:</span>
-          <span style={{ fontWeight: 600 }}>{formatFileSize(fileInfo.pngSize1x)}</span>
+          <span style={{ fontWeight: 600 }}>
+            {formatFileSize(fileInfo.pngSize1x)}
+          </span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <span>PNG @2x:</span>
-          <span style={{ fontWeight: 600 }}>{formatFileSize(fileInfo.pngSize2x)}</span>
+          <span style={{ fontWeight: 600 }}>
+            {formatFileSize(fileInfo.pngSize2x)}
+          </span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <span>PNG @3x:</span>
-          <span style={{ fontWeight: 600 }}>{formatFileSize(fileInfo.pngSize3x)}</span>
+          <span style={{ fontWeight: 600 }}>
+            {formatFileSize(fileInfo.pngSize3x)}
+          </span>
         </div>
       </div>
 
       {/* SVG Export Options */}
       <div className="control-group mt-4">
-  <label
-    htmlFor="svg-format-select"
-    className="control-label block mb-2 text-sm text-zinc-300"
-  >
-    SVG Format
-  </label>
+        <label
+          htmlFor="svg-format-select"
+          className="control-label block mb-2 text-sm text-zinc-300"
+        >
+          SVG Format
+        </label>
 
-  <Select
-    value={svgFormat}
-    onValueChange={(value) => setSvgFormat(value as SVGExportFormat)}
-  >
-    <SelectTrigger
-      id="svg-format-select"
-      className="
+        <Select
+          value={svgFormat}
+          onValueChange={(value) => setSvgFormat(value as SVGExportFormat)}
+        >
+          <SelectTrigger
+            id="svg-format-select"
+            className="
         w-full
         bg-zinc-900
         text-zinc-200
@@ -191,91 +223,142 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
         hover:border-zinc-600
         focus:ring-zinc-500
       "
-    >
-      <SelectValue placeholder="Select format" />
-    </SelectTrigger>
+          >
+            <SelectValue placeholder="Select format" />
+          </SelectTrigger>
 
-    <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
-      <SelectItem value="canvas">Canvas (flat)</SelectItem>
-      <SelectItem value="pattern">Pattern (reusable)</SelectItem>
-    </SelectContent>
-  </Select>
+          <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
+            <SelectItem value="canvas">Canvas (flat)</SelectItem>
+            <SelectItem value="pattern">Pattern (reusable)</SelectItem>
+          </SelectContent>
+        </Select>
 
-  {/* Helper text */}
-  <div className="text-xs mt-2 text-zinc-400">
-    {svgFormat === "canvas"
-      ? "Flat SVG, ready for web or design tools"
-      : "Reusable pattern element for backgrounds"}
-  </div>
-</div>
-
+        {/* Helper text */}
+        <div className="text-xs mt-2 text-zinc-400">
+          {svgFormat === "canvas"
+            ? "Flat SVG, ready for web or design tools"
+            : "Reusable pattern element for backgrounds"}
+        </div>
+      </div>
 
       {/* SVG Buttons */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+      <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
         <Button
           onClick={handleDownloadSVG}
           disabled={isExporting}
-          className="button button-primary"
-          style={{ flex: 1 }}
+          className="bg-neutral-200 hover:bg-neutral-300 text-neutral-800 flex-1 cursor-pointer"
           title="Download SVG file"
         >
-          {isExporting ? (<><Loader className="h-4 w-4" />Exporting...</>) : (<><Download className="h-4 w-4" />SVG</>)}
+          {isExporting ? (
+            <>
+              <Loader className="h-4 w-4 mr-2 animate-spin" />
+              Exporting...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4 mr-2" />
+              SVG
+            </>
+          )}
         </Button>
         <Button
           onClick={handleCopySVG}
           disabled={isExporting}
-          className={`button ${copied ? 'button-success' : 'button-secondary'}`}
+          className={`button ${copied ? "button-success" : "button-secondary"}`}
           style={{ flex: 1 }}
           title="Copy SVG to clipboard"
         >
-          {copied ? (<><Check className="h-4 w-4" />Copied</>) : (<><Copy className="h-4 w-4" />Copy</>)}
+          {copied ? (
+            <>
+              <Check className="h-4 w-4" />
+              Copied
+            </>
+          ) : (
+            <>
+              <Copy className="h-4 w-4" />
+              Copy
+            </>
+          )}
         </Button>
       </div>
 
       {/* PNG Export Scales */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '0.5rem',
-          marginTop: '1rem'
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: "0.5rem",
+          marginTop: "1rem",
         }}
       >
         <Button
           onClick={() => handleDownloadPNG(1)}
           disabled={isExporting}
           className="button button-secondary"
-          style={{ fontSize: '0.85rem' }}
+          style={{ fontSize: "0.85rem" }}
           title="Download PNG @1x"
         >
-          {isExporting ? (<><Loader className="h-4 w-4" />Exporting...</>) : (<><Download className="h-4 w-4" /> @1x</>)}
+          {isExporting ? (
+            <>
+              <Loader className="h-4 w-4" />
+              Exporting...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" /> @1x
+            </>
+          )}
         </Button>
         <Button
           onClick={() => handleDownloadPNG(2)}
           disabled={isExporting}
           className="button button-secondary"
-          style={{ fontSize: '0.85rem' }}
+          style={{ fontSize: "0.85rem" }}
           title="Download PNG @2x (Retina)"
         >
-          {isExporting ? (<><Loader className="h-4 w-4" />Exporting...</>) : (<><Download className="h-4 w-4" /> @2x</>)}
+          {isExporting ? (
+            <>
+              <Loader className="h-4 w-4" />
+              Exporting...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" /> @2x
+            </>
+          )}
         </Button>
         <Button
           onClick={() => handleDownloadPNG(3)}
           disabled={isExporting}
           className="button button-secondary"
-          style={{ fontSize: '0.85rem' }}
+          style={{ fontSize: "0.85rem" }}
           title="Download PNG @3x (Ultra high-res)"
         >
-          {isExporting ? (<><Loader className="h-4 w-4" />Exporting...</>) : (<><Download className="h-4 w-4" /> @3x</>)}
+          {isExporting ? (
+            <>
+              <Loader className="h-4 w-4" />
+              Exporting...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" /> @3x
+            </>
+          )}
         </Button>
       </div>
 
       {/* Help text */}
-      <div style={{ fontSize: '0.75rem', marginTop: '1rem', color: 'var(--color-text-secondary)' }}>
-        <p style={{ margin: '0.5rem 0' }}>
+      <div
+        style={{
+          fontSize: "0.75rem",
+          marginTop: "1rem",
+          color: "var(--color-text-secondary)",
+        }}
+      >
+        <p style={{ margin: "0.5rem 0" }}>
           <strong>Export tips:</strong>
         </p>
-        <ul style={{ margin: '0.5rem 0', paddingLeft: '1.25rem' }}>
+        <ul style={{ margin: "0.5rem 0", paddingLeft: "1.25rem" }}>
           <li>SVG: infinitely scalable, smallest file size</li>
           <li>PNG: raster, use for fixed sizes or web</li>
           <li>@2x/@3x: for high-DPI screens (Retina, modern phones)</li>
