@@ -241,15 +241,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             </label>
             <span className="control-value">{config.strokeWidth ?? 1}px</span>
           </div>
-          <input
+
+          <Slider
             id="stroke-width-slider"
-            type="range"
-            min="0.5"
-            max="10"
-            step="0.5"
-            value={config.strokeWidth ?? 1}
-            onChange={(e) => onStrokeWidthChange(parseFloat(e.target.value))}
-            className="control-input slider-input"
+            min={0.5}
+            max={10}
+            step={0.5}
+            value={[config.strokeWidth ?? 1]}
+            onValueChange={(value) => onStrokeWidthChange(value[0])}
+            className="control-input w-full"
           />
         </div>
 
@@ -262,15 +262,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               {Math.round((config.strokeOpacity ?? 1) * 100)}%
             </span>
           </div>
-          <input
+
+          <Slider
             id="stroke-opacity-slider"
-            type="range"
-            min="0"
-            max="1"
-            step="0.05"
-            value={config.strokeOpacity ?? 1}
-            onChange={(e) => onStrokeOpacityChange(parseFloat(e.target.value))}
-            className="control-input slider-input"
+            min={0}
+            max={1}
+            step={0.05}
+            value={[config.strokeOpacity ?? 1]}
+            onValueChange={(value) => onStrokeOpacityChange(value[0])}
+            className="control-input w-full"
           />
         </div>
 
