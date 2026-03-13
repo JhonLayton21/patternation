@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Slider } from "./ui/slider";
 
 export interface ControlPanelProps {
   activeType: PatternType;
@@ -176,15 +177,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             </label>
             <span className="control-value">{config.cellSize ?? 20}px</span>
           </div>
-          <input
+
+          <Slider
             id="size-slider"
-            type="range"
-            min="5"
-            max="100"
-            step="1"
-            value={config.cellSize ?? 20}
-            onChange={(e) => onCellSizeChange(parseInt(e.target.value, 10))}
-            className="control-input slider-input"
+            min={5}
+            max={100}
+            step={1}
+            value={[config.cellSize ?? 20]}
+            onValueChange={(value) => onCellSizeChange(value[0])}
+            className="control-input w-full"
           />
         </div>
 
@@ -195,15 +196,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             </label>
             <span className="control-value">{config.gap ?? 0}px</span>
           </div>
-          <input
+
+          <Slider
             id="gap-slider"
-            type="range"
-            min="0"
-            max="50"
-            step="1"
-            value={config.gap ?? 0}
-            onChange={(e) => onGapChange(parseInt(e.target.value, 10))}
-            className="control-input slider-input"
+            min={0}
+            max={50}
+            step={1}
+            value={[config.gap ?? 0]}
+            onValueChange={(value) => onGapChange(value[0])}
+            className="control-input w-full"
           />
         </div>
       </section>
